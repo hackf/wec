@@ -1,0 +1,54 @@
+@import '../../mixins';
+
+.sidebar {
+  height: 100vh; /* 100% Full-height */
+  width: 100%; /* 0 width - change this with JavaScript */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+  grid-column: 3 / 4;
+  grid-row: 1/2;
+  z-index: 1;
+
+  display: grid;
+  grid-template-columns: 50px 1fr;
+
+  &__open {
+    background-color: #01abe5;
+    display: grid;
+  }
+
+  &__content {
+    height: 100%;
+    overflow-y: scroll;
+    background-color: #f8f8ff;
+
+    &--title {
+      width: 100%;
+      font-weight: 600;
+      font-size: 3rem;
+      text-align: center;
+      text-decoration: underline;
+    }
+  }
+
+  &__button {
+    width: 4vmin;
+    height: 4vmin;
+    color: white;
+
+    &--container {
+      align-self: center;
+      justify-self: center;
+      width: max-content;
+      height: max-content;
+    }
+  }
+
+  @include respond(phone) {
+    display: none;
+  }
+}
+
+.activate {
+  grid-column: 2 / 4;
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
