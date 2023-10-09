@@ -69,6 +69,7 @@ const Details = () => {
           if (JSON.stringify(current) !== JSON.stringify([lng, lat])) {
             current = [lng, lat];
 
+            /*
             const data = await updateMap(e, corState, mapState, graphDispatch);
             const start = data.paths[0].points.coordinates[0];
 
@@ -79,11 +80,12 @@ const Details = () => {
               pitch: 0,
               bearing: data.paths[0].instructions[0].heading,
             });
+            */
 
             setMarker(mapState, [lng, lat]);
           }
         });
-      }, 1000);
+      }, 10);
     }
 
     mobileDispatch('route');

@@ -67,4 +67,5 @@ export function setMarker(map, coordinates) {
       },
     ],
   });
+  map.panTo(coordinates);
 }
