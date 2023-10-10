@@ -106,7 +106,7 @@ const Details = () => {
                     field: 'instruction_distance',
                     val: graphState.paths[0].instructions[instruction_index + 1],
                   },
-                  { field: 'instrcution_index', vak: instruction_index + 1 },
+                  { field: 'instrcution_index', val: instruction_index + 1 },
                   { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
                 ]);
               } else {
