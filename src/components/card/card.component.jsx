@@ -19,7 +19,7 @@ const Card = ({ distance, direction, mobile }) => {
       return `${Math.round(x / 100) / 10} KM`;
     }
 
-    return `${x} M`;
+    return `${Math.round(x)} M`;
   };
 
   const choose_arrow = x => {

@@ -67,5 +67,9 @@ export function setMarker(map, coordinates) {
       },
     ],
   });
-  map.panTo(coordinates);
+}
+
+export function removeMarker(map) {
+  map.removeLayer('nav');
+  map.removeSource('nav');
 }

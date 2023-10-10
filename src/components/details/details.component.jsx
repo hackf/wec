@@ -7,7 +7,9 @@ import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.c
 import { updateMap } from '../form/form.component';
 import { useMobileContext } from '../../providers/mobile/mobile.context';
 import { useStopsContext } from '../../providers/stops/stops.context.jsx';
+import { useRouteContext } from '../../providers/route/route.context.jsx';
 import { addMarker, setMarker } from '../map/functions/map.markers.jsx';
+import math, { distance_meters } from '../math/math.component.jsx';
 //import * as Location from 'expo-location';
 
 import './details.styles.scss';
@@ -18,7 +20,10 @@ const Details = () => {
   const { graphState, graphDispatch } = useGraphhopperContext();
   const { mobileState, mobileDispatch } = useMobileContext();
   const { stopsDispatch } = useStopsContext();
+  const { routeState, routeDispatch } = useRouteContext();
   let searching = true;
+
+  console.log(routeState);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -39,6 +44,7 @@ const Details = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     let current = [];
+    let data = [];
 
     navigator.geolocation.getCurrentPosition(async function (position) {
       const lat = position.coords.latitude;
@@ -46,18 +52,28 @@ const Details = () => {
 
       current = [lng, lat];
 
-      const data = await updateMap(e, corState, mapState, graphDispatch);
+      data = await updateMap(e, corState, mapState, graphDispatch);
       const start = data.paths[0].points.coordinates[0];
+
+      console.log(data);
+
+      const user_cor = await math(data.paths[0].points.coordinates, routeState.point_index, lat, lng);
+
+      routeDispatch([
+        { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
+        { field: 'distance', val: data.paths[0].distance },
+        { field: 'time', val: data.paths[0].time },
+        { field: 'instruction_distance', val: data.paths[0].instructions[0].distance },
+      ]);
 
       mapState.flyTo({
         duration: 4000,
-        center: [lng, lat],
-        zoom: 18,
-        pitch: 0,
-        bearing: data.paths[0].instructions[0].heading,
+        center: [user_cor.inter.y, user_cor.inter.x],
+        zoom: 17,
+        pitch: 40,
+        bearing: data.paths[0].instructions[routeState.instruction_index].heading,
       });
-
-      addMarker(mapState, [lng, lat]);
+      addMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);
     });
 
     if (navigator.geolocation) {
@@ -66,23 +82,59 @@ const Details = () => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
 
-          if (JSON.stringify(current) !== JSON.stringify([lng, lat])) {
+          if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
             current = [lng, lat];
 
             /*
             const data = await updateMap(e, corState, mapState, graphDispatch);
             const start = data.paths[0].points.coordinates[0];
-
-            mapState.flyTo({
-              duration: 400,
-              center: [lng, lat],
-              zoom: 18,
-              pitch: 0,
-              bearing: data.paths[0].instructions[0].heading,
-            });
             */
 
-            setMarker(mapState, [lng, lat]);
+            const user_cor = await math(data.paths[0].points.coordinates, routeState.point_index, lat, lng);
+
+            if (user_cor.path == 2) {
+              const new_point_index = routeState.point_index + 1;
+              const instruction_index = routeState.instructions_index;
+              const graphState_data = graphState.paths[0].instructions[instruction_index];
+              routeDispatch({ filed: 'point_index', val: new_point_index });
+
+              if (new_point_index > graphState_data.interval[1]) {
+                routeDispatch([
+                  { filed: 'distance', val: routeState.distance - graphState_data.distance },
+                  { field: 'time', val: routeState.time - graphState_data.time },
+                  {
+                    field: 'instruction_distance',
+                    val: graphState.paths[0].instructions[instruction_index + 1],
+                  },
+                  { field: 'instrcution_index', vak: instruction_index + 1 },
+                  { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
+                ]);
+              } else {
+                routeDispatch([
+                  {
+                    field: 'instruction_distance',
+                    val:
+                      routeState.instruction_distance -
+                      distance_meters(
+                        graphState.paths[0].points.coordinates[new_point_index - 2][0],
+                        graphState.paths[0].points.coordinates[new_point_index - 2][1],
+                        graphState.paths[0].points.coordinates[new_point_index - 1][0],
+                        graphState.paths[0].points.coordinates[new_point_index - 1][1]
+                      ),
+                  },
+                  { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
+                ]);
+              }
+            }
+
+            mapState.flyTo({
+              duration: 4000,
+              center: [user_cor.inter.y, user_cor.inter.x],
+              zoom: 17,
+              pitch: 40,
+              bearing: data.paths[0].instructions[routeState.instruction_index].heading,
+            });
+            setMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);
           }
         });
       }, 10);
