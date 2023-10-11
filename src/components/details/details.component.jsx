@@ -109,13 +109,11 @@ const Details = () => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
 
-          //if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
-          if (true) {
+          if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
             const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
             current = [lng, lat];
 
-            //if (user_cor.path == 2) {
-            if (true) {
+            if (user_cor.path == 2) {
               const graphState_data = data.paths[0].instructions[localRoute.instruction_index];
 
               localRoute.point_index += 1;
@@ -157,7 +155,7 @@ const Details = () => {
             setMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);
           }
         });
-      }, 10000);
+      }, 100);
     }
 
     mobileDispatch('route');
