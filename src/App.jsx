@@ -11,7 +11,7 @@ import MapContext from './providers/mapbox/mapbox.context';
 import GraphhopperContext from './providers/graphhopper/graphhopper.context';
 import StopsContext from './providers/stops/stops.context.jsx';
 import MobileContext from './providers/mobile/mobile.context.jsx';
-import RouteContext from './providers/route/route.context.jsx';
+import { RouteProvider } from './providers/route/route.context.jsx';
 
 import { mapboxReducer } from './providers/mapbox/mapbox.reducer';
 import { coordinatesReducer } from './providers/coordinates/coordinates.reducer';
@@ -34,14 +34,6 @@ function App() {
   const [graphState, setGraph] = useState(undefined);
   const [stopsState, setStops] = useState([]);
   const [mobileState, setMobile] = useState('searching');
-  const [routeState, setRoute] = useState({
-    point_index: 1,
-    instruction_index: 0,
-    current_location: [0, 0],
-    time: 0,
-    distance: 0,
-    instruction_distance: 0,
-  });
 
   const mapProviderState = {
     mapState,
@@ -66,19 +58,6 @@ function App() {
     },
   };
 
-  const routeProviderState = {
-    routeState,
-    routeDispatch: arr => {
-      const newObj = { ...routeState };
-
-      for (const { field, val } of arr) {
-        newObj[field] = val;
-      }
-
-      setRoute(newObj);
-    },
-  };
-
   const graphProviderState = {
     graphState,
     graphDispatch: async val => {
@@ -98,14 +77,14 @@ function App() {
         <div className="main">
           <CoordinatesContext.Provider value={corProviderState}>
             <MapContext.Provider value={mapProviderState}>
-              <RouteContext.Provider value={routeProviderState}>
+              <RouteProvider>
                 <Map />
                 <StopsContext.Provider value={stopsProviderState}>
                   <MobileContext.Provider value={mobileProviderState}>
                     <Menu />
                   </MobileContext.Provider>
                 </StopsContext.Provider>
-              </RouteContext.Provider>
+              </RouteProvider>
             </MapContext.Provider>
           </CoordinatesContext.Provider>
         </div>

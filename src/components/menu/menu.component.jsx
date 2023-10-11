@@ -6,7 +6,7 @@ import { useMobileContext } from '../../providers/mobile/mobile.context';
 import Dashboard from '../dashboard/dashboard.component';
 import Card from '../card/card.component';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
-import { useRouteContext } from '../../providers/route/route.context.jsx';
+import useRoute from '../../providers/route/route.context';
 import { distance_meters } from '../math/math.component.jsx';
 
 import './menu.styles.scss';
@@ -14,17 +14,16 @@ import './menu.styles.scss';
 const Menu = () => {
   const { mobileState } = useMobileContext();
   const { graphState } = useGraphhopperContext();
-  const { routeState } = useRouteContext();
+  const { route } = useRoute();
 
   function calc_distance() {
     const distance_traveled = distance_meters(
-      routeState.current_location[1],
-      routeState.current_location[0],
-      graphState.paths[0].points.coordinates[routeState.point_index - 1][1],
-      graphState.paths[0].points.coordinates[routeState.point_index - 1][0]
+      route.current_location[1],
+      route.current_location[0],
+      graphState.paths[0].points.coordinates[route.point_index - 1][1],
+      graphState.paths[0].points.coordinates[route.point_index - 1][0]
     );
-    console.log(distance_traveled);
-    return routeState.instruction_distance - distance_traveled;
+    return route.instruction_distance - distance_traveled;
   }
 
   return (
@@ -40,7 +39,7 @@ const Menu = () => {
       <Dashboard />
       <div className={mobileState === 'route' ? 'menu__direction' : 'hidden'}>
         <Card
-          direction={graphState ? graphState.paths[0].instructions[routeState.instruction_index + 1].text : ''}
+          direction={graphState ? graphState.paths[0].instructions[route.instruction_index + 1].text : ''}
           distance={graphState ? calc_distance() : ''}
           mobile
         />

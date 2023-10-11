@@ -3,7 +3,7 @@ import { handleExit } from '../details/details.component';
 import { useMapContext } from '../../providers/mapbox/mapbox.context';
 import { CgClose } from 'react-icons/cg';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
-import { useRouteContext } from '../../providers/route/route.context';
+import useRoute from '../../providers/route/route.context';
 import { distance_meters } from '../math/math.component';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { useStopsContext } from '../../providers/stops/stops.context.jsx';
@@ -15,7 +15,7 @@ const Dashboard = () => {
   const { mapState } = useMapContext();
   const { mobileState, mobileDispatch } = useMobileContext();
   const { graphState } = useGraphhopperContext();
-  const { routeState } = useRouteContext();
+  const { route } = useRoute();
   const { corState, corDispatch } = useCoordinatesContext();
   const { stopsDispatch } = useStopsContext();
 
@@ -41,23 +41,21 @@ const Dashboard = () => {
 
   if (graphState) {
     const instruction_distance_left =
-      routeState.instruction_distance -
+      route.instruction_distance -
       distance_meters(
-        routeState.current_location[1],
-        routeState.current_location[0],
+        route.current_location[1],
+        route.current_location[0],
         graphState.paths[0].points.coordinates[0][1],
         graphState.paths[0].points.coordinates[0][0]
       );
     const distance =
-      routeState.distance -
-      graphState.paths[0].instructions[routeState.instruction_index].distance +
-      instruction_distance_left;
+      route.distance - graphState.paths[0].instructions[route.instruction_index].distance + instruction_distance_left;
 
     const time =
-      routeState.time -
+      route.time -
       (1 -
-        (instruction_distance_left / graphState.paths[0].instructions[routeState.instruction_index].distance) *
-          graphState.paths[0].instructions[routeState.instruction_index].time);
+        (instruction_distance_left / graphState.paths[0].instructions[route.instruction_index].distance) *
+          graphState.paths[0].instructions[route.instruction_index].time);
 
     const today = new Date();
     today.setHours(today.getHours() + round_time(time)[0] * 1);

@@ -7,7 +7,7 @@ import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.c
 import { updateMap } from '../form/form.component';
 import { useMobileContext } from '../../providers/mobile/mobile.context';
 import { useStopsContext } from '../../providers/stops/stops.context.jsx';
-import { useRouteContext } from '../../providers/route/route.context.jsx';
+import useRoute from '../../providers/route/route.context.jsx';
 import { addMarker, setMarker } from '../map/functions/map.markers.jsx';
 import math, { distance_meters } from '../math/math.component.jsx';
 //import * as Location from 'expo-location';
@@ -20,10 +20,10 @@ const Details = () => {
   const { graphState, graphDispatch } = useGraphhopperContext();
   const { mobileState, mobileDispatch } = useMobileContext();
   const { stopsDispatch } = useStopsContext();
-  const { routeState, routeDispatch } = useRouteContext();
+  const { route, handleInputChange } = useRoute();
   let searching = true;
 
-  console.log(routeState);
+  console.log(route);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -54,24 +54,19 @@ const Details = () => {
 
       data = await updateMap(e, corState, mapState, graphDispatch);
       const start = data.paths[0].points.coordinates[0];
+      const user_cor = await math(data.paths[0].points.coordinates, route.point_index, lat, lng);
 
-      console.log(data);
-
-      const user_cor = await math(data.paths[0].points.coordinates, routeState.point_index, lat, lng);
-
-      routeDispatch([
-        { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
-        { field: 'distance', val: data.paths[0].distance },
-        { field: 'time', val: data.paths[0].time },
-        { field: 'instruction_distance', val: data.paths[0].instructions[0].distance },
-      ]);
+      handleInputChange([user_cor.inter.y, user_cor.inter.x], 'current_location');
+      handleInputChange(data.paths[0].distance, 'distance');
+      handleInputChange(data.paths[0].time, 'time');
+      handleInputChange(data.paths[0].instructions[0].distance, 'instruction_distance');
 
       mapState.flyTo({
         duration: 4000,
         center: [user_cor.inter.y, user_cor.inter.x],
         zoom: 17,
         pitch: 40,
-        bearing: data.paths[0].instructions[routeState.instruction_index].heading,
+        bearing: data.paths[0].instructions[route.instruction_index].heading,
       });
       addMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);
     });
@@ -82,62 +77,51 @@ const Details = () => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
 
-          if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
-            current = [lng, lat];
-
-            /*
-            const data = await updateMap(e, corState, mapState, graphDispatch);
-            const start = data.paths[0].points.coordinates[0];
-            */
-
-            const user_cor = await math(data.paths[0].points.coordinates, routeState.point_index, lat, lng);
+          //if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
+          if (mapState.getSource('nav')) {
+            const user_cor = await math(data.paths[0].points.coordinates, route.point_index, lat, lng);
 
             if (user_cor.path == 2) {
-              const new_point_index = routeState.point_index + 1;
-              const instruction_index = routeState.instructions_index;
-              const graphState_data = graphState.paths[0].instructions[instruction_index];
-              routeDispatch({ filed: 'point_index', val: new_point_index });
+              const new_point_index = route.point_index + 1;
+              const instruction_index = route.instruction_index;
+              const graphState_data = data.paths[0].instructions[instruction_index];
 
               if (new_point_index > graphState_data.interval[1]) {
-                routeDispatch([
-                  { filed: 'distance', val: routeState.distance - graphState_data.distance },
-                  { field: 'time', val: routeState.time - graphState_data.time },
-                  {
-                    field: 'instruction_distance',
-                    val: graphState.paths[0].instructions[instruction_index + 1],
-                  },
-                  { field: 'instrcution_index', val: instruction_index + 1 },
-                  { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
-                ]);
+                handleInputChange(new_point_index, 'point_index');
+                handleInputChange(route.distance - graphState_data.distance, 'distance');
+                handleInputChange(route.time - graphState_data.time, 'time');
+                handleInputChange(data.paths[0].instructions[instruction_index + 1], 'instruction_distance');
+                handleInputChange(instruction_index + 1, 'instrcution_index');
               } else {
-                routeDispatch([
-                  {
-                    field: 'instruction_distance',
-                    val:
-                      routeState.instruction_distance -
-                      distance_meters(
-                        graphState.paths[0].points.coordinates[new_point_index - 2][0],
-                        graphState.paths[0].points.coordinates[new_point_index - 2][1],
-                        graphState.paths[0].points.coordinates[new_point_index - 1][0],
-                        graphState.paths[0].points.coordinates[new_point_index - 1][1]
-                      ),
-                  },
-                  { field: 'current_location', val: [user_cor.inter.y, user_cor.inter.x] },
-                ]);
+                handleInputChange(new_point_index, 'point_index');
+                handleInputChange(
+                  route.instruction_distance -
+                    distance_meters(
+                      data.paths[0].points.coordinates[new_point_index - 2][0],
+                      data.paths[0].points.coordinates[new_point_index - 2][1],
+                      data.paths[0].points.coordinates[new_point_index - 1][0],
+                      data.paths[0].points.coordinates[new_point_index - 1][1]
+                    ),
+                  'instruction_distance'
+                );
               }
+              handleInputChange([user_cor.inter.y, user_cor.inter.x], 'current_location');
             }
+
+            console.log(route);
 
             mapState.flyTo({
               duration: 4000,
               center: [user_cor.inter.y, user_cor.inter.x],
               zoom: 17,
               pitch: 40,
-              bearing: data.paths[0].instructions[routeState.instruction_index].heading,
+              bearing: data.paths[0].instructions[route.instruction_index].heading,
             });
+
             setMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);
           }
         });
-      }, 10);
+      }, 10000);
     }
 
     mobileDispatch('route');
