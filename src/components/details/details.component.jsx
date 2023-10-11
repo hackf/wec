@@ -77,8 +77,7 @@ const Details = () => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
 
-          //if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
-          if (mapState.getSource('nav')) {
+          if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
             const user_cor = await math(data.paths[0].points.coordinates, route.point_index, lat, lng);
 
             if (user_cor.path == 2) {
