@@ -72,12 +72,16 @@ const Details = () => {
     });
 
     if (navigator.geolocation) {
+      let count = 0;
       setInterval(async function () {
         navigator.geolocation.getCurrentPosition(async function (position) {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
+          count += 1;
 
-          if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
+          //if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
+          if (mapState.getSource('nav')) {
+            console.log('here');
             const user_cor = await math(data.paths[0].points.coordinates, route.point_index, lat, lng);
 
             if (user_cor.path == 2) {
@@ -90,7 +94,7 @@ const Details = () => {
                 handleInputChange(route.distance - graphState_data.distance, 'distance');
                 handleInputChange(route.time - graphState_data.time, 'time');
                 handleInputChange(data.paths[0].instructions[instruction_index + 1], 'instruction_distance');
-                handleInputChange(instruction_index + 1, 'instrcution_index');
+                handleInputChange(instruction_index + 1, 'instruction_index');
               } else {
                 handleInputChange(new_point_index, 'point_index');
                 handleInputChange(
@@ -104,10 +108,9 @@ const Details = () => {
                   'instruction_distance'
                 );
               }
-              handleInputChange([user_cor.inter.y, user_cor.inter.x], 'current_location');
             }
 
-            console.log(route);
+            handleInputChange([user_cor.inter.y, user_cor.inter.x], 'current_location');
 
             mapState.flyTo({
               duration: 4000,
