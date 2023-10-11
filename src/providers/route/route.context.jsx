@@ -7,12 +7,11 @@ const RouteContext = createContext(initialState);
 export const RouteProvider = ({ children }) => {
   const [route, dispatch] = useReducer(routeReducer, initialState);
 
-  const handleInputChange = (value, field) => {
+  const handleInputChange = newState => {
     dispatch({
       type: 'CHANGING',
       payload: {
-        value,
-        field,
+        newState,
       },
     });
   };

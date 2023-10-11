@@ -21,9 +21,40 @@ const Details = () => {
   const { mobileState, mobileDispatch } = useMobileContext();
   const { stopsDispatch } = useStopsContext();
   const { route, handleInputChange } = useRoute();
+  const localRoute = {
+    point_index: 1,
+    instruction_index: 0,
+    current_location: [0, 0],
+    time: 0,
+    distance: 0,
+    instruction_distance: 0,
+  };
   let searching = true;
+  let current = [];
 
-  console.log(route);
+  // Converts from degrees to radians.
+  function toRadians(degrees) {
+    return (degrees * Math.PI) / 180;
+  }
+
+  // Converts from radians to degrees.
+  function toDegrees(radians) {
+    return (radians * 180) / Math.PI;
+  }
+
+  function bearing(startLat, startLng, destLat, destLng) {
+    startLat = toRadians(startLat);
+    startLng = toRadians(startLng);
+    destLat = toRadians(destLat);
+    destLng = toRadians(destLng);
+
+    const y = Math.sin(destLng - startLng) * Math.cos(destLat);
+    const x =
+      Math.cos(startLat) * Math.sin(destLat) - Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
+    let brng = Math.atan2(y, x);
+    brng = toDegrees(brng);
+    return (brng + 360) % 360;
+  }
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -39,11 +70,10 @@ const Details = () => {
         });
       });
     }
-  }, []);
+  });
 
   async function handleSubmit(e) {
     e.preventDefault();
-    let current = [];
     let data = [];
 
     navigator.geolocation.getCurrentPosition(async function (position) {
@@ -54,70 +84,74 @@ const Details = () => {
 
       data = await updateMap(e, corState, mapState, graphDispatch);
       const start = data.paths[0].points.coordinates[0];
-      const user_cor = await math(data.paths[0].points.coordinates, route.point_index, lat, lng);
+      const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
 
-      handleInputChange([user_cor.inter.y, user_cor.inter.x], 'current_location');
-      handleInputChange(data.paths[0].distance, 'distance');
-      handleInputChange(data.paths[0].time, 'time');
-      handleInputChange(data.paths[0].instructions[0].distance, 'instruction_distance');
+      localRoute.time = data.paths[0].time;
+      localRoute.distance = data.paths[0].distance;
+      localRoute.instruction_distance = data.paths[0].instructions[localRoute.instruction_index].distance;
+      localRoute.current_location = [user_cor.inter.y, user_cor.inter.x];
+
+      handleInputChange(localRoute);
 
       mapState.flyTo({
         duration: 4000,
         center: [user_cor.inter.y, user_cor.inter.x],
         zoom: 17,
         pitch: 40,
-        bearing: data.paths[0].instructions[route.instruction_index].heading,
+        bearing: data.paths[0].instructions[localRoute.instruction_index].heading,
       });
       addMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);
     });
 
     if (navigator.geolocation) {
-      let count = 0;
       setInterval(async function () {
         navigator.geolocation.getCurrentPosition(async function (position) {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-          count += 1;
 
           //if (JSON.stringify(current) !== JSON.stringify([lng, lat]) && mapState.getSource('nav')) {
-          if (mapState.getSource('nav')) {
-            console.log('here');
-            const user_cor = await math(data.paths[0].points.coordinates, route.point_index, lat, lng);
+          if (true) {
+            const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
+            current = [lng, lat];
 
-            if (user_cor.path == 2) {
-              const new_point_index = route.point_index + 1;
-              const instruction_index = route.instruction_index;
-              const graphState_data = data.paths[0].instructions[instruction_index];
+            //if (user_cor.path == 2) {
+            if (true) {
+              const graphState_data = data.paths[0].instructions[localRoute.instruction_index];
 
-              if (new_point_index > graphState_data.interval[1]) {
-                handleInputChange(new_point_index, 'point_index');
-                handleInputChange(route.distance - graphState_data.distance, 'distance');
-                handleInputChange(route.time - graphState_data.time, 'time');
-                handleInputChange(data.paths[0].instructions[instruction_index + 1], 'instruction_distance');
-                handleInputChange(instruction_index + 1, 'instruction_index');
+              localRoute.point_index += 1;
+              localRoute.instruction_index += 1;
+
+              if (localRoute.point_index > graphState_data.interval[1]) {
+                localRoute.time -= graphState_data.time;
+                localRoute.distance -= graphState_data.distance;
+                localRoute.instruction_distance = data.paths[0].instructions[localRoute.instruction_index].distance;
               } else {
-                handleInputChange(new_point_index, 'point_index');
-                handleInputChange(
-                  route.instruction_distance -
-                    distance_meters(
-                      data.paths[0].points.coordinates[new_point_index - 2][0],
-                      data.paths[0].points.coordinates[new_point_index - 2][1],
-                      data.paths[0].points.coordinates[new_point_index - 1][0],
-                      data.paths[0].points.coordinates[new_point_index - 1][1]
-                    ),
-                  'instruction_distance'
+                localRoute.instruction_distance -= distance_meters(
+                  data.paths[0].points.coordinates[localRoute.point_index - 2][0],
+                  data.paths[0].points.coordinates[localRoute.point_index - 2][1],
+                  data.paths[0].points.coordinates[localRoute.point_index - 1][0],
+                  data.paths[0].points.coordinates[localRoute.point_index - 1][1]
                 );
               }
             }
 
-            handleInputChange([user_cor.inter.y, user_cor.inter.x], 'current_location');
+            localRoute.current_location = [user_cor.inter.y, user_cor.inter.x];
+
+            handleInputChange(localRoute);
+
+            console.log(data);
 
             mapState.flyTo({
               duration: 4000,
               center: [user_cor.inter.y, user_cor.inter.x],
               zoom: 17,
               pitch: 40,
-              bearing: data.paths[0].instructions[route.instruction_index].heading,
+              bearing: bearing(
+                data.paths[0].points.coordinates[localRoute.point_index - 1][1],
+                data.paths[0].points.coordinates[localRoute.point_index - 1][0],
+                data.paths[0].points.coordinates[localRoute.point_index][1],
+                data.paths[0].points.coordinates[localRoute.point_index][0]
+              ),
             });
 
             setMarker(mapState, [user_cor.inter.y, user_cor.inter.x]);

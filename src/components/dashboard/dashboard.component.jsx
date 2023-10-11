@@ -45,8 +45,8 @@ const Dashboard = () => {
       distance_meters(
         route.current_location[1],
         route.current_location[0],
-        graphState.paths[0].points.coordinates[0][1],
-        graphState.paths[0].points.coordinates[0][0]
+        graphState.paths[0].points.coordinates[route.point_index - 1][1],
+        graphState.paths[0].points.coordinates[route.point_index - 1][0]
       );
     const distance =
       route.distance - graphState.paths[0].instructions[route.instruction_index].distance + instruction_distance_left;

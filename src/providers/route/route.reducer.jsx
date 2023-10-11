@@ -9,11 +9,11 @@ export const initialState = {
 
 const routeReducer = (state, action) => {
   const { type, payload } = action;
-  const { field, value } = payload;
+  const { newState } = payload;
 
   switch (type) {
     case 'CHANGING':
-      return { ...state, [field]: value };
+      return { ...newState };
     case 'RESET':
       return initialState;
     default:
