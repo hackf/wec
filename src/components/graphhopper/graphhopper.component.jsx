@@ -8,7 +8,7 @@ export const getCoordinates = async addr => {
     //provider: 'nominatim',
     provider: 'default',
     //countrycode: 'ca',
-    key: 'ee4af31e-0f04-4b6c-9f9b-c8a665ec6a89',
+    key: process.env.REACT_APP_API_KEY,
   }).toString();
 
   const response = await fetch(`https://graphhopper.com/api/1/geocode?${query}`, { method: 'GET' });
@@ -29,7 +29,7 @@ export const routes = async props => {
     }
   }
 
-  const response = await fetch('https://graphhopper.com/api/1/route?key=ee4af31e-0f04-4b6c-9f9b-c8a665ec6a89', {
+  const response = await fetch(`https://graphhopper.com/api/1/route?key=${process.env.REACT_APP_API_KEY}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
