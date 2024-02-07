@@ -32,7 +32,7 @@ const Sidebar = () => {
       const data = graphState.paths[0].instructions;
 
       instructions = data.map((i, index) => {
-        return <Card distance={get_distance(data, index)} direction={i.text} />;
+        return <Card distance={get_distance(data, index)} direction={i.text} key={index} />;
         //return <p>{`In ${Math.round(i.distance)} meters ${i.text}`}</p>;
       });
     }
@@ -48,7 +48,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div class={`sidebar ${isOpen === true ? 'activate' : ''}`}>
+    <div className={`sidebar ${isOpen === true ? 'activate' : ''}`}>
       <div className="sidebar__open">
         <div className="sidebar__button--container" onClick={on_click}>
           {display_arrow()}
