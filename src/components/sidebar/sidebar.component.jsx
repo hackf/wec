@@ -19,9 +19,6 @@ const Sidebar = () => {
       return undefined;
     }
 
-    console.log(index);
-    console.log(data);
-
     return Math.round(data[index - 1].distance);
   };
 

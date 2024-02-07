@@ -13,7 +13,6 @@ export const Add = () => {
       ...stopsState,
       <Input label={`Stop ${stopsState.length + 1}`} id={`Stop ${stopsState.length + 1}`} />,
     ]);
-    console.log(stopsState);
   }
 
   return (

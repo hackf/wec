@@ -137,8 +137,6 @@ const Details = () => {
 
             handleInputChange(localRoute);
 
-            console.log(data);
-
             mapState.flyTo({
               duration: 4000,
               center: [user_cor.inter.y, user_cor.inter.x],

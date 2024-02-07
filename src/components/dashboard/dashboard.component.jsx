@@ -61,8 +61,6 @@ const Dashboard = () => {
     today.setHours(today.getHours() + round_time(time)[0] * 1);
     today.setMinutes(today.getMinutes() + round_time(time)[2] * 1);
 
-    console.log(route);
-
     return (
       <div className={mobileState === 'route' ? 'dashboard' : 'hidden'}>
         <div className="dashboard__exit">

@@ -23,7 +23,7 @@ const Form = () => {
     e.preventDefault();
 
     const data = await updateMap(e, corState, mapState, graphDispatch);
-    console.log(data);
+
     const start = data.paths[0].points.coordinates[0];
 
     mapState.flyTo({
