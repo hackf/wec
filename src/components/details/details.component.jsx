@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { BsArrowLeft } from 'react-icons/bs';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
@@ -29,7 +29,7 @@ const Details = () => {
     distance: 0,
     instruction_distance: 0,
   };
-  let searching = true;
+  // let searching = true;
   let current = [];
 
   // Converts from degrees to radians.
@@ -83,7 +83,7 @@ const Details = () => {
       current = [lng, lat];
 
       data = await updateMap(e, corState, mapState, graphDispatch);
-      const start = data.paths[0].points.coordinates[0];
+      // const start = data.paths[0].points.coordinates[0];
       const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
 
       localRoute.time = data.paths[0].time;
@@ -113,7 +113,7 @@ const Details = () => {
             const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
             current = [lng, lat];
 
-            if (user_cor.path == 2) {
+            if (user_cor.path === 2) {
               const graphState_data = data.paths[0].instructions[localRoute.instruction_index];
 
               localRoute.point_index += 1;
@@ -202,7 +202,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
     mapState.removeSource('route');
   }
 
-  const keys = ['stop_1', 'stop_2', 'stop_3', 'end'];
+  // const keys = ['stop_1', 'stop_2', 'stop_3', 'end'];
 
   corDispatch({}, corState.start);
   stopsDispatch([]);

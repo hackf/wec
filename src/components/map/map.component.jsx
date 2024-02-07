@@ -3,11 +3,9 @@ import { useRef, useEffect } from 'react';
 import { useMapContext } from '../../providers/mapbox/mapbox.context';
 import addRoutes from './functions/map.routes';
 import setThreeD from './functions/map.3d';
-import addMarker from './functions/map.markers';
 import { initilize } from './functions/map.initialize';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { routes } from '../graphhopper/graphhopper.component';
-import { getCoordinates } from '../graphhopper/graphhopper.component';
 
 import './map.styles.scss';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
@@ -24,7 +22,7 @@ const Map = () => {
 
   useEffect(() => {
     setMap();
-  }, []);
+  });
 
   useEffect(() => {
     if (mapState === undefined) return;

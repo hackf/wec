@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useStopsContext } from '../../providers/stops/stops.context.jsx';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 

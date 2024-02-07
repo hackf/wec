@@ -3,7 +3,7 @@ export const geoCoding = async addr => {
     country: 'CA',
     language: 'en',
     limit: '5',
-    access_token: `${process.env.REACT_APP_GEOCODING_ACCESS_TOKEN}`,
+    access_token: process.env.REACT_APP_GEOCODING_ACCESS_TOKEN,
   }).toString();
 
   const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${addr}.json?${query}`, {
