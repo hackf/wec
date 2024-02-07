@@ -19,7 +19,7 @@ import { graphhopperReducer } from './providers/graphhopper/graphhopper.reducer'
 
 import './App.scss';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZWphc25rYXJvIiwiYSI6ImNsYndjOTduajBiY2QzbnFueGY0d3E4anQifQ.yjV2mQdGzjjNuCwKZz-e-Q';
+mapboxgl.accessToken = `${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`;
 
 function App() {
   const defaultCor = {
