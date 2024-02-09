@@ -3,6 +3,7 @@ export const geoCoding = async addr => {
     country: 'CA',
     language: 'en',
     limit: '5',
+    proximity: '-83.026772, 42.317432',
     access_token: process.env.REACT_APP_GEOCODING_ACCESS_TOKEN,
   }).toString();
 
