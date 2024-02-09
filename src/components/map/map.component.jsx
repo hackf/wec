@@ -16,13 +16,13 @@ const Map = () => {
   const { corState } = useCoordinatesContext();
   const { graphDispatch } = useGraphhopperContext();
 
-  const setMap = async () => {
-    initilize(mapState, mapDispatch, mapContainer, [-83.0363633, 42.3149367]);
-  };
-
   useEffect(() => {
+    const setMap = async () => {
+      initilize(mapState, mapDispatch, mapContainer, [-83.0363633, 42.3149367]);
+    };
+
     setMap();
-  });
+  }, [mapState, mapDispatch]);
 
   useEffect(() => {
     if (mapState === undefined) return;

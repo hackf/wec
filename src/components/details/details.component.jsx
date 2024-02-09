@@ -56,21 +56,21 @@ const Details = () => {
     return (brng + 360) % 360;
   }
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async function (position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
+  // useEffect(() => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(async function (position) {
+  //       const lat = position.coords.latitude;
+  //       const lng = position.coords.longitude;
 
-        await corDispatch({
-          field: 'start',
-          lat,
-          lng,
-          location: 'Current Location',
-        });
-      });
-    }
-  });
+  //       await corDispatch({
+  //         field: 'start',
+  //         lat,
+  //         lng,
+  //         location: 'Current Location',
+  //       });
+  //     });
+  //   }
+  // });
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -185,7 +185,7 @@ const Details = () => {
             {corState.end ? corState.end.location : 'Chose a ending point'}
           </p>
         </div>
-        <div className="button button--add">Add Desination</div>
+        <div className="button button--add">Add Destination</div>
         <div className="button button--start" onClick={handleSubmit}>
           Start
         </div>
