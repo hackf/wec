@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import CoordinatesContext from '../../providers/coordinates/coordinates.context';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { AutoCompleteComponent } from '@syncfusion/ej2-react-dropdowns';
@@ -13,6 +13,7 @@ export const Input = ({ label, type }) => {
   const { corState, corDispatch } = useCoordinatesContext();
   const { mapState } = useMapContext();
   const { mobileDispatch } = useMobileContext();
+  const [hiddenValue, setHiddenValue] = useState(false);
 
   async function handleChange(event) {
     if (label === 'end' && type === 'mobile') {
@@ -45,8 +46,20 @@ export const Input = ({ label, type }) => {
     return data;
   };
 
+  const hideValue = e => {
+    e.preventDefault();
+    const target = e.target.offsetParent.children[0];
+    const placeholder = target.innerText === 'Search Here...';
+
+    if (placeholder || (!placeholder && target.ariaSelected)) {
+      setHiddenValue(false);
+    } else {
+      setHiddenValue(true);
+    }
+  };
+
   return (
-    <label className={`input__label`}>
+    <label className={hiddenValue ? `input__label hideSelection` : `input__label`} onClick={hideValue}>
       {type === 'mobile' ? '' : `${label}:`}
       <AsyncSelect
         cacheOptions
