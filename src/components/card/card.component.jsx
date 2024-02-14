@@ -5,7 +5,6 @@ import { BsArrowUp } from 'react-icons/bs';
 import './card.styles.scss';
 
 const Card = ({ distance, direction, mobile }) => {
-  console.log(mobile);
   const display_distance = x => {
     if (x === undefined) {
       return <></>;

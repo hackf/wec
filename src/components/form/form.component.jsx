@@ -13,6 +13,19 @@ import { geoLocate } from '../map/functions/map.geolocate';
 
 import './form.styles.scss';
 
+export const updateMap = async (corState, mapState, graphDispatch) => {
+  const data = await routes(corState);
+  if (mapState.getStyle().layers.some(e => e.id === 'route')) {
+    mapState.removeLayer('route');
+    mapState.removeSource('route');
+  }
+
+  addRoutes(mapState, data.paths[0].points.coordinates);
+  await graphDispatch(data);
+
+  return data;
+};
+
 const Form = () => {
   const { corState } = useCoordinatesContext();
   const { mapState } = useMapContext();
@@ -22,8 +35,8 @@ const Form = () => {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const data = await updateMap(e, corState, mapState, graphDispatch);
-    console.log(data);
+    const data = await updateMap(corState, mapState, graphDispatch);
+
     const start = data.paths[0].points.coordinates[0];
 
     mapState.flyTo({
@@ -50,20 +63,6 @@ const Form = () => {
       <input type="submit" value="Submit" className="form__button" />
     </form>
   );
-};
-
-export const updateMap = async (e, corState, mapState, graphDispatch) => {
-  const data = await routes(corState);
-
-  if (mapState.getStyle().layers.some(e => e.id === 'route')) {
-    mapState.removeLayer('route');
-    mapState.removeSource('route');
-  }
-
-  addRoutes(mapState, data.paths[0].points.coordinates);
-  await graphDispatch(data);
-
-  return data;
 };
 
 export default Form;

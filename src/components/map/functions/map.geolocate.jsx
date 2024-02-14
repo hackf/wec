@@ -18,7 +18,6 @@ export const geoLocate = async corDispatch => {
 };
 
 function success(position) {
-  console.log(position);
   const lat = position.coords.latitude;
   const lng = position.coords.longitude;
 
