@@ -62,7 +62,7 @@ const Dashboard = () => {
     today.setMinutes(today.getMinutes() + round_time(time)[2] * 1);
 
     return (
-      <div className={mobileState === 'route' ? 'dashboard' : 'hidden'}>
+      <div className="dashboard">
         <div className="dashboard__exit">
           <CgClose className="dashboard__icon" />
           <div className="dashboard__button" onClick={handleClick} />
