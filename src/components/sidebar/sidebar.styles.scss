@@ -6,7 +6,7 @@
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
   grid-column: 3 / 4;
   grid-row: 1/2;
-  z-index: 1;
+  z-index: 100;
 
   display: grid;
   grid-template-columns: 50px 1fr;
