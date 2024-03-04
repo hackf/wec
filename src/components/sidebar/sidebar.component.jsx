@@ -53,7 +53,14 @@ const Sidebar = () => {
       </div>
       <div className="sidebar__content">
         <div className="sidebar__content--title">Directions</div>
-        {displayInstructions()}
+        {displayInstructions() ? (
+          displayInstructions()
+        ) : (
+          <p className="sidebar__content--noContent">
+            Directions will appear here after submitting your desired stops. Please select and submit your stops in the
+            Windsor Essex Cycling form.
+          </p>
+        )}
       </div>
     </div>
   );

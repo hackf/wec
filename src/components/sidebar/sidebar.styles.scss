@@ -28,6 +28,12 @@
       text-align: center;
       text-decoration: underline;
     }
+
+    &--noContent {
+      font-weight: 300;
+      font-size: 1.5rem;
+      padding-left: 20px;
+    }
   }
 
   &__button {
