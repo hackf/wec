@@ -4,7 +4,6 @@ import { BsArrowLeft } from 'react-icons/bs';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { useMapContext } from '../../providers/mapbox/mapbox.context';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
-import { updateMap } from '../form/form.component';
 import { useMobileContext } from '../../providers/mobile/mobile.context';
 import { useStopsContext } from '../../providers/stops/stops.context.jsx';
 import useRoute from '../../providers/route/route.context.jsx';
@@ -13,6 +12,7 @@ import math, { distance_meters } from '../math/math.component.jsx';
 //import * as Location from 'expo-location';
 
 import './details.styles.scss';
+import { updateMap } from '../form/functions/updateMap.jsx';
 
 const Details = () => {
   const { corState, corDispatch } = useCoordinatesContext();
@@ -56,21 +56,21 @@ const Details = () => {
     return (brng + 360) % 360;
   }
 
-  // useEffect(() => {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(async function (position) {
-  //       const lat = position.coords.latitude;
-  //       const lng = position.coords.longitude;
+  useEffect(() => {
+    if (navigator.geolocation && !corState.start) {
+      navigator.geolocation.getCurrentPosition(async function (position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
 
-  //       await corDispatch({
-  //         field: 'start',
-  //         lat,
-  //         lng,
-  //         location: 'Current Location',
-  //       });
-  //     });
-  //   }
-  // });
+        await corDispatch({
+          field: 'start',
+          lat,
+          lng,
+          location: 'Current Location',
+        });
+      });
+    }
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -82,7 +82,7 @@ const Details = () => {
 
       current = [lng, lat];
 
-      data = await updateMap(e, corState, mapState, graphDispatch);
+      data = await updateMap(corState, mapState, graphDispatch);
       // const start = data.paths[0].points.coordinates[0];
       const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
 
