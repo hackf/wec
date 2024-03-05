@@ -48,14 +48,21 @@ const Dashboard = () => {
         graphState.paths[0].points.coordinates[route.point_index - 1][1],
         graphState.paths[0].points.coordinates[route.point_index - 1][0]
       );
+
     const distance =
-      route.distance - graphState.paths[0].instructions[route.instruction_index].distance + instruction_distance_left;
+      mobileState === 'route'
+        ? route.distance -
+          graphState.paths[0].instructions[route.instruction_index].distance +
+          instruction_distance_left
+        : graphState.paths[0].distance;
 
     const time =
-      route.time -
-      (1 -
-        (instruction_distance_left / graphState.paths[0].instructions[route.instruction_index].distance) *
-          graphState.paths[0].instructions[route.instruction_index].time);
+      mobileState === 'route'
+        ? route.time -
+          (1 -
+            (instruction_distance_left / graphState.paths[0].instructions[route.instruction_index].distance) *
+              graphState.paths[0].instructions[route.instruction_index].time)
+        : graphState.paths[0].time;
 
     const today = new Date();
     today.setHours(today.getHours() + round_time(time)[0] * 1);
