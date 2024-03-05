@@ -162,7 +162,7 @@ const Details = () => {
   function handleClick(e) {
     e.preventDefault();
 
-    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState);
+    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState, graphDispatch);
   }
 
   return (
@@ -194,7 +194,7 @@ const Details = () => {
   );
 };
 
-export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState) => {
+export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState, graphDispatch) => {
   if (mapState.getStyle().layers.some(e => e.id === 'route')) {
     mapState.removeLayer('route');
     mapState.removeSource('route');
@@ -204,6 +204,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
 
   corDispatch({}, corState.start);
   stopsDispatch([]);
+  graphDispatch(null);
 
   mapState.flyTo({
     duration: 4000,

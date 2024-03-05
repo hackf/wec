@@ -14,7 +14,7 @@ import './dashboard.styles.scss';
 const Dashboard = () => {
   const { mapState } = useMapContext();
   const { mobileState, mobileDispatch } = useMobileContext();
-  const { graphState } = useGraphhopperContext();
+  const { graphState, graphDispatch } = useGraphhopperContext();
   const { route } = useRoute();
   const { corState, corDispatch } = useCoordinatesContext();
   const { stopsDispatch } = useStopsContext();
@@ -35,8 +35,10 @@ const Dashboard = () => {
     e.preventDefault();
 
     // handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState);
-    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState);
-    removeMarker(mapState);
+    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState, graphDispatch);
+    if (mobileState === 'route') {
+      removeMarker(mapState);
+    }
   }
 
   if (graphState) {
