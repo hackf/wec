@@ -1,0 +1,18 @@
+@import '../../mixins';
+
+.input {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  @include respond(phone) {
+    display: unset;
+  }
+
+  &--hidden {
+    display: none;
+  }
+}

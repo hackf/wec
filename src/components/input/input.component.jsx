@@ -9,7 +9,7 @@ import { useMobileContext } from '../../providers/mobile/mobile.context';
 
 import './input.styles.scss';
 
-export const Input = ({ label, type }) => {
+export const Input = ({ label, type, placeholder }) => {
   const { corState, corDispatch } = useCoordinatesContext();
   const { mapState } = useMapContext();
   const { mobileDispatch } = useMobileContext();
@@ -67,7 +67,7 @@ export const Input = ({ label, type }) => {
         loadOptions={getData}
         className="input__box"
         onChange={handleChange}
-        placeholder="Search Here..."
+        placeholder={placeholder ? placeholder : 'Search Here...'}
       />
     </label>
   );

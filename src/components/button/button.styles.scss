@@ -2,6 +2,7 @@
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;
+  margin-bottom: 10px;
 
   &__button {
     grid-row: 1 / 2;

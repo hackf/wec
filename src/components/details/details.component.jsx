@@ -32,6 +32,8 @@ const Details = () => {
   // let searching = true;
   let current = [];
 
+  console.log(corState);
+
   // Converts from degrees to radians.
   function toRadians(degrees) {
     return (degrees * Math.PI) / 180;
@@ -173,19 +175,46 @@ const Details = () => {
       </div>
       <div className={mobileState === 'details' ? 'container' : 'hidden'}>
         <div className="info">
-          <div className="info__circle info__circle--red" />
-          <p className="info__label info__label--start">Start</p>
-          <p className="info__location info__location--start">
-            {corState.start ? corState.start.location : 'Chose a starting point'}
-          </p>
-          <div className="info__line" />
-          <div className="info__circle info__circle--blue" />
-          <p className="info__label info__label--end">End</p>
-          <p className="info__location info__location--end">
-            {corState.end ? corState.end.location : 'Chose a ending point'}
-          </p>
+          <div className="stop">
+            <div className="info__circle info__circle--red" />
+            <p className="info__label info__label--start">Start</p>
+            <p className="info__location info__location--start">
+              {corState.start ? corState.start.location : 'Chose a starting point'}
+            </p>
+            <div className="info__line" />
+          </div>
+          {corState.stop_1 ? (
+            <div className="stop">
+              <div className="info__circle info__circle--orange" />
+              <p className="info__label info__label--stop-1">Stop 1</p>
+              <p className="info__location info__location--stop-1">{corState.stop_1.location}</p>
+              <div className="info__line" />
+            </div>
+          ) : null}
+          {corState.stop_2 ? (
+            <div className="stop">
+              <div className="info__circle info__circle--yellow" />
+              <p className="info__label info__label--stop-2">Stop 2</p>
+              <p className="info__location info__location--stop-2">{corState.stop_2.location}</p>
+              <div className="info__line" />
+            </div>
+          ) : null}
+          {corState.stop_3 ? (
+            <div className="stop">
+              <div className="info__circle info__circle--green" />
+              <p className="info__label info__label--stop-3">Stop 3</p>
+              <p className="info__location info__location--stop-3">{corState.stop_3.location}</p>
+              <div className="info__line" />
+            </div>
+          ) : null}
+          <div className="stop">
+            <div className="info__circle info__circle--blue" />
+            <p className="info__label info__label--end">End</p>
+            <p className="info__location info__location--end">
+              {corState.end ? corState.end.location : 'Chose a ending point'}
+            </p>
+          </div>
         </div>
-        <div className="button button--add">Add Destination</div>
         <div className="button button--start" onClick={handleSubmit}>
           Start
         </div>
