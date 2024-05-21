@@ -68,9 +68,9 @@ function App() {
   return (
     <div className="app">
       <GraphhopperContext.Provider value={graphProviderState}>
-        <Sidebar />
-        <div className="main">
-          <CoordinatesContext.Provider value={corProviderState}>
+        <CoordinatesContext.Provider value={corProviderState}>
+          <Sidebar />
+          <div className="main">
             <MapContext.Provider value={mapProviderState}>
               <RouteProvider>
                 <Map />
@@ -81,8 +81,8 @@ function App() {
                 </StopsContext.Provider>
               </RouteProvider>
             </MapContext.Provider>
-          </CoordinatesContext.Provider>
-        </div>
+          </div>
+        </CoordinatesContext.Provider>
       </GraphhopperContext.Provider>
     </div>
   );

@@ -53,9 +53,27 @@
   @include respond(phone) {
     display: none;
   }
+
+  button {
+    color: white;
+    font-weight: bold;
+    background-color: #01abe5;
+    border: none;
+    height: 2rem;
+    width: 4rem;
+    margin-top: 20px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .activate {
   grid-column: 2 / 4;
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
+
+h2 {
+  text-align: center;
 }
