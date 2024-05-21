@@ -64,13 +64,11 @@ const Sidebar = () => {
         {displayInstructions() ? (
           <>
             <button onClick={handlePrint}>Print</button>
-            <div ref={componentRef}>
-              <h2>
-                {corState.start.location.slice(0, corState.start.location.indexOf(','))} to{' '}
-                {corState.end.location.slice(0, corState.end.location.indexOf(','))}
-              </h2>
-              {displayInstructions()}
-            </div>
+            <h2>
+              {corState.start.location.slice(0, corState.start.location.indexOf(','))} to{' '}
+              {corState.end.location.slice(0, corState.end.location.indexOf(','))}
+            </h2>
+            <div className="sidebar__content--instructions">{displayInstructions()}</div>
           </>
         ) : (
           <p className="sidebar__content--noContent">
