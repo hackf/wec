@@ -32,8 +32,6 @@ const Details = () => {
   // let searching = true;
   let current = [];
 
-  console.log(corState);
-
   // Converts from degrees to radians.
   function toRadians(degrees) {
     return (degrees * Math.PI) / 180;

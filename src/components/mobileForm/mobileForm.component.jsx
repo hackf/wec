@@ -11,7 +11,6 @@ const MobileForm = () => {
   const { mobileState } = useMobileContext();
 
   function displayStops() {
-    console.log(stopsState);
     return stopsState;
   }
 
