@@ -1,9 +1,19 @@
-export const geoCoding = async addr => {
+export const geoCoding = async (addr, state) => {
+  const proxCoords = state.stop_3
+    ? [state.stop_3.lng, state.stop_3.lat]
+    : state.stop_2
+    ? [state.stop_2.lng, state.stop_2.lat]
+    : state.stop_1
+    ? [state.stop_1.lng, state.stop_1.lat]
+    : state.start
+    ? [state.start.lng, state.start.lat]
+    : [-83.026772, 42.317432];
+
   const query = new URLSearchParams({
-    country: 'CA',
+    bbox: [-83.137, 41.888, -82.479, 42.4123],
     language: 'en',
     limit: '5',
-    proximity: '-83.026772, 42.317432',
+    proximity: `${proxCoords[0]}, ${proxCoords[1]}`,
     access_token: process.env.REACT_APP_GEOCODING_ACCESS_TOKEN,
   }).toString();
 

@@ -36,7 +36,8 @@ export const Input = ({ label, type, placeholder }) => {
 
   const getData = async event => {
     let data = [];
-    const response = await geoCoding(event);
+
+    const response = await geoCoding(event, corState);
 
     if (response !== undefined) {
       data = response.features.map(x => {
