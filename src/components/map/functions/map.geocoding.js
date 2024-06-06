@@ -10,7 +10,7 @@ export const geoCoding = async (addr, state) => {
     : [-83.026772, 42.317432];
 
   const query = new URLSearchParams({
-    bbox: [-83.137, 41.888, -82.479, 42.4123],
+    bbox: [-83.139, 41.7252, -82.474, 42.4234],
     language: 'en',
     limit: '5',
     proximity: `${proxCoords[0]}, ${proxCoords[1]}`,
