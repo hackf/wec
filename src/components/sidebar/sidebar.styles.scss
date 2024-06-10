@@ -19,7 +19,7 @@
   &__content {
     height: 100vh;
     background-color: #f8f8ff;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
 
@@ -79,6 +79,10 @@
 .activate {
   grid-column: 2 / 4;
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+
+  .sidebar__content {
+    display: flex;
+  }
 }
 
 h2 {
