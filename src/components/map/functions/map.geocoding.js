@@ -11,11 +11,14 @@ export const geoCoding = async (addr, state) => {
 
   const query = new URLSearchParams({
     bbox: [-83.139, 41.7252, -82.474, 42.4234],
+    country: 'CA',
     language: 'en',
     limit: '5',
     proximity: `${proxCoords[0]}, ${proxCoords[1]}`,
     access_token: process.env.REACT_APP_GEOCODING_ACCESS_TOKEN,
   }).toString();
+
+  // FOR DETROIT INTEGRATION: remove 'country' parameter in the query above.
 
   const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${addr}.json?${query}`, {
     method: 'GET',
