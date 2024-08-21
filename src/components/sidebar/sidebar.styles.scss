@@ -6,7 +6,7 @@
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
   grid-column: 3 / 4;
   grid-row: 1/2;
-  z-index: 1;
+  z-index: 100;
 
   display: grid;
   grid-template-columns: 50px 1fr;
@@ -17,9 +17,16 @@
   }
 
   &__content {
-    height: 100%;
-    overflow-y: scroll;
+    height: 100vh;
     background-color: #f8f8ff;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+
+    &--instructions {
+      height: 100%;
+      overflow-y: auto;
+    }
 
     &--title {
       width: 100%;
@@ -28,12 +35,19 @@
       text-align: center;
       text-decoration: underline;
     }
+
+    &--noContent {
+      font-weight: 300;
+      font-size: 1.5rem;
+      padding-left: 20px;
+    }
   }
 
   &__button {
     width: 4vmin;
     height: 4vmin;
     color: white;
+    cursor: pointer;
 
     &--container {
       align-self: center;
@@ -46,9 +60,41 @@
   @include respond(phone) {
     display: none;
   }
+
+  button {
+    color: white;
+    font-weight: bold;
+    background-color: #01abe5;
+    border: none;
+    height: 2rem;
+    width: 4rem;
+    margin-top: 20px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .activate {
   grid-column: 2 / 4;
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+
+  .sidebar__content {
+    display: flex;
+  }
+}
+
+h2 {
+  text-align: center;
+}
+
+@media print {
+  .sidebar__content--instructions {
+    overflow-y: visible;
+  }
+
+  button {
+    display: none;
+  }
 }
