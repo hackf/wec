@@ -3,11 +3,9 @@ import { useRef, useEffect } from 'react';
 import { useMapContext } from '../../providers/mapbox/mapbox.context';
 import addRoutes from './functions/map.routes';
 import setThreeD from './functions/map.3d';
-import addMarker from './functions/map.markers';
 import { initilize } from './functions/map.initialize';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { routes } from '../graphhopper/graphhopper.component';
-import { getCoordinates } from '../graphhopper/graphhopper.component';
 
 import './map.styles.scss';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
@@ -18,13 +16,13 @@ const Map = () => {
   const { corState } = useCoordinatesContext();
   const { graphDispatch } = useGraphhopperContext();
 
-  const setMap = async () => {
-    initilize(mapState, mapDispatch, mapContainer, [-83.0363633, 42.3149367]);
-  };
-
   useEffect(() => {
+    const setMap = async () => {
+      initilize(mapState, mapDispatch, mapContainer, [-83.0363633, 42.3149367]);
+    };
+
     setMap();
-  }, []);
+  }, [mapState, mapDispatch]);
 
   useEffect(() => {
     if (mapState === undefined) return;
@@ -38,8 +36,6 @@ const Map = () => {
     mapState.on('style.load', async () => {
       if (corState.start) {
         const data = await routes(corState);
-
-        console.log(data);
 
         addRoutes(mapState, data.paths[0].points.coordinates);
         await graphDispatch(data);

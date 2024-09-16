@@ -10,6 +10,7 @@ import useRoute from '../../providers/route/route.context';
 import { distance_meters } from '../math/math.component.jsx';
 
 import './menu.styles.scss';
+import MobileForm from '../mobileForm/mobileForm.component.jsx';
 
 const Menu = () => {
   const { mobileState } = useMobileContext();
@@ -31,10 +32,6 @@ const Menu = () => {
       <div className="menu--computer">
         <h1 className="menu__title">Windsor Essex Cycling</h1>
         <Form />
-      </div>
-      <div className={mobileState === 'searching' ? 'input' : 'input--hidden'}>
- 
-        <Input label="end" type="mobile" />
       </div>
       <Details />
       <Dashboard />

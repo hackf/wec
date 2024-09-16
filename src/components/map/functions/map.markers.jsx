@@ -1,8 +1,8 @@
 import nav from '../../../icon.png';
 
 export function addMarker(map, coordinates) {
-  const layers = map.getStyle().layers;
-  const labelLayerId = layers.find(layer => layer.type === 'symbol' && layer.layout['text-field']).id;
+  // const layers = map.getStyle().layers;
+  // const labelLayerId = layers.find(layer => layer.type === 'symbol' && layer.layout['text-field']).id;
 
   map.loadImage(nav, (error, image) => {
     if (error) throw error;
@@ -48,8 +48,8 @@ export function addMarker(map, coordinates) {
 }
 
 export function setMarker(map, coordinates) {
-  const layers = map.getStyle().layers;
-  const labelLayerId = layers.find(layer => layer.type === 'symbol' && layer.layout['text-field']).id;
+  // const layers = map.getStyle().layers;
+  // const labelLayerId = layers.find(layer => layer.type === 'symbol' && layer.layout['text-field']).id;
 
   map.getSource('nav').setData({
     type: 'FeatureCollection',
