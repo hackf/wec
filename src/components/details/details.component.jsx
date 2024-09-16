@@ -233,6 +233,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
   stopsDispatch([]);
   graphDispatch(null);
 
+  
   mapState.flyTo({
     duration: 4000,
     center: [-83.0363633, 42.3149367],
@@ -242,6 +243,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
   });
 
   mobileDispatch('searching');
+  
 };
 
 export default Details;
