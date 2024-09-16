@@ -207,6 +207,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
   corDispatch({}, corState.start);
   stopsDispatch([]);
 
+  
   mapState.flyTo({
     duration: 4000,
     center: [-83.0363633, 42.3149367],
@@ -216,6 +217,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
   });
 
   mobileDispatch('searching');
+  
 };
 
 export default Details;

@@ -33,6 +33,7 @@ const Menu = () => {
         <Form />
       </div>
       <div className={mobileState === 'searching' ? 'input' : 'input--hidden'}>
+ 
         <Input label="end" type="mobile" />
       </div>
       <Details />
