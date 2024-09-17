@@ -37,6 +37,8 @@ const Map = () => {
       if (corState.start) {
         const data = await routes(corState);
 
+        if (!data) return;
+
         addRoutes(mapState, data.paths[0].points.coordinates);
         await graphDispatch(data);
       }
