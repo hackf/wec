@@ -33,6 +33,7 @@ const Menu = () => {
         <h1 className="menu__title">Windsor Essex Cycling</h1>
         <Form />
       </div>
+      <MobileForm />
       <Details />
       <Dashboard />
       <div className={mobileState === 'route' ? 'menu__direction' : 'hidden'}>
