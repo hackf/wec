@@ -8,7 +8,7 @@ export const getCoordinates = async addr => {
     //provider: 'nominatim',
     provider: 'default',
     //countrycode: 'ca',
-    key: 'ee4af31e-0f04-4b6c-9f9b-c8a665ec6a89',
+    key: process.env.REACT_APP_API_KEY,
   }).toString();
 
   const response = await fetch(`https://graphhopper.com/api/1/geocode?${query}`, { method: 'GET' });
@@ -28,8 +28,7 @@ export const routes = async props => {
       point_hints.push(val.location);
     }
   }
-
-  const response = await fetch('https://graphhopper.com/api/1/route?key=ee4af31e-0f04-4b6c-9f9b-c8a665ec6a89', {
+  const response = await fetch(`https://graphhopper.com/api/1/route?key=${process.env.REACT_APP_API_KEY}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -39,12 +38,24 @@ export const routes = async props => {
       point_hints,
       snap_preventions: ['motorway', 'ferry', 'tunnel'],
       details: ['road_class', 'surface'],
-      vehicle: 'bike',
-      locale: 'en',
+      vehicle: "racingbike",
       instructions: true,
       calc_points: true,
       points_encoded: false,
-    }),
+      priority: [
+        { "if": "road_class == MOTORWAY", "multiply_by": "0.1" },
+        { "if": "road_class == TRUNK", "multiply_by": "0.2" },
+        { "if": "road_class == SECONDARY", "multiply_by": "0.2" },
+        { "if": "road_class == PRIMARY", "multiply_by": "0.8" },
+        { "if": "road_class == TERTIARY", "multiply_by": "0.7" },
+        { "if": "road_class == RESIDENTIAL", "multiply_by": "1.0" },
+        { "if": "road_class == ROAD", "multiply_by": "0.5" },
+        { "if": "road_class == CYCLEWAY", "multiply_by": "1.0" },
+        { "if": "bike_network == MISSING", "multiply_by": "0.7" },
+        { "if": "max_speed >= 60", "multiply_by": "0.1" },
+        { "if": "lanes > 2", "multiply_by": "0.2" }
+      ]
+    })
   });
 
   return await response.json();

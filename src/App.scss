@@ -2,7 +2,7 @@
 
 .main {
   width: 100%;
-  height: 100vh;
+  height: 95dvh;
   grid-column: 1/3;
   grid-row: 1/2;
 
@@ -19,7 +19,7 @@
 }
 
 .app {
-  height: 100vh;
+  height: 100dvh;
   display: grid;
 
   grid-template-columns: 1fr 350px 50px;

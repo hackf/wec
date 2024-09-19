@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { BsArrowLeft } from 'react-icons/bs';
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { useMapContext } from '../../providers/mapbox/mapbox.context';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
-import { updateMap } from '../form/form.component';
 import { useMobileContext } from '../../providers/mobile/mobile.context';
 import { useStopsContext } from '../../providers/stops/stops.context.jsx';
 import useRoute from '../../providers/route/route.context.jsx';
@@ -13,6 +12,7 @@ import math, { distance_meters } from '../math/math.component.jsx';
 //import * as Location from 'expo-location';
 
 import './details.styles.scss';
+import { updateMap } from '../form/functions/updateMap.jsx';
 
 const Details = () => {
   const { corState, corDispatch } = useCoordinatesContext();
@@ -29,7 +29,7 @@ const Details = () => {
     distance: 0,
     instruction_distance: 0,
   };
-  let searching = true;
+  // let searching = true;
   let current = [];
 
   // Converts from degrees to radians.
@@ -57,7 +57,7 @@ const Details = () => {
   }
 
   useEffect(() => {
-    if (navigator.geolocation) {
+    if (navigator.geolocation && !corState.start) {
       navigator.geolocation.getCurrentPosition(async function (position) {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
@@ -70,7 +70,7 @@ const Details = () => {
         });
       });
     }
-  });
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -82,8 +82,8 @@ const Details = () => {
 
       current = [lng, lat];
 
-      data = await updateMap(e, corState, mapState, graphDispatch);
-      const start = data.paths[0].points.coordinates[0];
+      data = await updateMap(corState, mapState, graphDispatch);
+      // const start = data.paths[0].points.coordinates[0];
       const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
 
       localRoute.time = data.paths[0].time;
@@ -113,7 +113,7 @@ const Details = () => {
             const user_cor = await math(data.paths[0].points.coordinates, localRoute.point_index, lat, lng);
             current = [lng, lat];
 
-            if (user_cor.path == 2) {
+            if (user_cor.path === 2) {
               const graphState_data = data.paths[0].instructions[localRoute.instruction_index];
 
               localRoute.point_index += 1;
@@ -136,8 +136,6 @@ const Details = () => {
             localRoute.current_location = [user_cor.inter.y, user_cor.inter.x];
 
             handleInputChange(localRoute);
-
-            console.log(data);
 
             mapState.flyTo({
               duration: 4000,
@@ -164,7 +162,7 @@ const Details = () => {
   function handleClick(e) {
     e.preventDefault();
 
-    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState);
+    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState, graphDispatch);
   }
 
   return (
@@ -175,19 +173,46 @@ const Details = () => {
       </div>
       <div className={mobileState === 'details' ? 'container' : 'hidden'}>
         <div className="info">
-          <div className="info__circle info__circle--red" />
-          <p className="info__label info__label--start">Start</p>
-          <p className="info__location info__location--start">
-            {corState.start ? corState.start.location : 'Chose a starting point'}
-          </p>
-          <div className="info__line" />
-          <div className="info__circle info__circle--blue" />
-          <p className="info__label info__label--end">End</p>
-          <p className="info__location info__location--end">
-            {corState.end ? corState.end.location : 'Chose a ending point'}
-          </p>
+          <div className="stop">
+            <div className="info__circle info__circle--red" />
+            <p className="info__label info__label--start">Start</p>
+            <p className="info__location info__location--start">
+              {corState.start ? corState.start.location : 'Chose a starting point'}
+            </p>
+            <div className="info__line" />
+          </div>
+          {corState.stop_1 ? (
+            <div className="stop">
+              <div className="info__circle info__circle--orange" />
+              <p className="info__label info__label--stop-1">Stop 1</p>
+              <p className="info__location info__location--stop-1">{corState.stop_1.location}</p>
+              <div className="info__line" />
+            </div>
+          ) : null}
+          {corState.stop_2 ? (
+            <div className="stop">
+              <div className="info__circle info__circle--yellow" />
+              <p className="info__label info__label--stop-2">Stop 2</p>
+              <p className="info__location info__location--stop-2">{corState.stop_2.location}</p>
+              <div className="info__line" />
+            </div>
+          ) : null}
+          {corState.stop_3 ? (
+            <div className="stop">
+              <div className="info__circle info__circle--green" />
+              <p className="info__label info__label--stop-3">Stop 3</p>
+              <p className="info__location info__location--stop-3">{corState.stop_3.location}</p>
+              <div className="info__line" />
+            </div>
+          ) : null}
+          <div className="stop">
+            <div className="info__circle info__circle--blue" />
+            <p className="info__label info__label--end">End</p>
+            <p className="info__location info__location--end">
+              {corState.end ? corState.end.location : 'Chose a ending point'}
+            </p>
+          </div>
         </div>
-        <div className="button button--add">Add Desination</div>
         <div className="button button--start" onClick={handleSubmit}>
           Start
         </div>
@@ -196,17 +221,19 @@ const Details = () => {
   );
 };
 
-export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState) => {
+export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState, graphDispatch) => {
   if (mapState.getStyle().layers.some(e => e.id === 'route')) {
     mapState.removeLayer('route');
     mapState.removeSource('route');
   }
 
-  const keys = ['stop_1', 'stop_2', 'stop_3', 'end'];
+  // const keys = ['stop_1', 'stop_2', 'stop_3', 'end'];
 
   corDispatch({}, corState.start);
   stopsDispatch([]);
+  graphDispatch(null);
 
+  
   mapState.flyTo({
     duration: 4000,
     center: [-83.0363633, 42.3149367],
@@ -216,6 +243,7 @@ export const handleExit = (e, mapState, mobileDispatch, corDispatch, stopsDispat
   });
 
   mobileDispatch('searching');
+  
 };
 
 export default Details;

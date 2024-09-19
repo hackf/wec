@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
+import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
 import { BsArrowLeft } from 'react-icons/bs';
 import { BsArrowRight } from 'react-icons/bs';
 import Card from '../card/card.component.jsx';
@@ -13,6 +15,7 @@ const Sidebar = () => {
   const componentRef = useRef();
 
   const handlePrint = useReactToPrint({
+
     copyStyles: false,
     content: () => componentRef.current,
     documentTitle: 'Directions',
@@ -32,9 +35,6 @@ const Sidebar = () => {
       return undefined;
     }
 
-    console.log(index);
-    console.log(data);
-
     return Math.round(data[index - 1].distance);
   };
 
@@ -45,7 +45,7 @@ const Sidebar = () => {
       const data = graphState.paths[0].instructions;
 
       instructions = data.map((i, index) => {
-        return <Card distance={get_distance(data, index)} direction={i.text} />;
+        return <Card distance={get_distance(data, index)} direction={i.text} key={index} />;
         //return <p>{`In ${Math.round(i.distance)} meters ${i.text}`}</p>;
       });
     }
@@ -63,6 +63,7 @@ const Sidebar = () => {
 
 return (
     <div className={`sidebar ${isOpen ? 'activate' : ''}`}>
+
       <div className="sidebar__open">
         <div className="sidebar__button--container" onClick={on_click}>
           {display_arrow()}
@@ -87,6 +88,7 @@ return (
             </p>
           )}
         </div>
+
       </div>
     </div>
   );

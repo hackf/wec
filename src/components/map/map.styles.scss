@@ -3,4 +3,24 @@
 
   grid-column: 1 / 9;
   grid-row: 1 / 10;
+
+  .mapboxgl-ctrl-bottom-left,
+  .mapboxgl-ctrl-attrib-button {
+    display: none;
+  }
+
+  .mapboxgl-ctrl-attrib-inner {
+    display: flex;
+    justify-content: space-around;
+  }
+  a {
+    font-weight: 700;
+    text-decoration: none;
+    color: black;
+    padding: 5px 5px 10px 5px;
+
+    &:hover {
+      color: #01abe5;
+    }
+  }
 }

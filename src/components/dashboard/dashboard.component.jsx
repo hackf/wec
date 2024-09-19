@@ -14,7 +14,7 @@ import './dashboard.styles.scss';
 const Dashboard = () => {
   const { mapState } = useMapContext();
   const { mobileState, mobileDispatch } = useMobileContext();
-  const { graphState } = useGraphhopperContext();
+  const { graphState, graphDispatch } = useGraphhopperContext();
   const { route } = useRoute();
   const { corState, corDispatch } = useCoordinatesContext();
   const { stopsDispatch } = useStopsContext();
@@ -35,8 +35,10 @@ const Dashboard = () => {
     e.preventDefault();
 
     // handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState);
-    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState);
-    removeMarker(mapState);
+    handleExit(e, mapState, mobileDispatch, corDispatch, stopsDispatch, corState, graphDispatch);
+    if (mobileState === 'route') {
+      removeMarker(mapState);
+    }
   }
 
   if (graphState) {
@@ -48,23 +50,28 @@ const Dashboard = () => {
         graphState.paths[0].points.coordinates[route.point_index - 1][1],
         graphState.paths[0].points.coordinates[route.point_index - 1][0]
       );
+
     const distance =
-      route.distance - graphState.paths[0].instructions[route.instruction_index].distance + instruction_distance_left;
+      mobileState === 'route'
+        ? route.distance -
+          graphState.paths[0].instructions[route.instruction_index].distance +
+          instruction_distance_left
+        : graphState.paths[0].distance;
 
     const time =
-      route.time -
-      (1 -
-        (instruction_distance_left / graphState.paths[0].instructions[route.instruction_index].distance) *
-          graphState.paths[0].instructions[route.instruction_index].time);
+      mobileState === 'route'
+        ? route.time -
+          (1 -
+            (instruction_distance_left / graphState.paths[0].instructions[route.instruction_index].distance) *
+              graphState.paths[0].instructions[route.instruction_index].time)
+        : graphState.paths[0].time;
 
     const today = new Date();
     today.setHours(today.getHours() + round_time(time)[0] * 1);
     today.setMinutes(today.getMinutes() + round_time(time)[2] * 1);
 
-    console.log(route);
-
     return (
-      <div className={mobileState === 'route' ? 'dashboard' : 'hidden'}>
+      <div className="dashboard">
         <div className="dashboard__exit">
           <CgClose className="dashboard__icon" />
           <div className="dashboard__button" onClick={handleClick} />

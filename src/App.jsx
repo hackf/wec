@@ -1,6 +1,5 @@
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { MdClose } from 'react-icons/md';
 
 import Map from './components/map/map.component';
 import Sidebar from './components/sidebar/sidebar.component';
@@ -13,13 +12,9 @@ import StopsContext from './providers/stops/stops.context.jsx';
 import MobileContext from './providers/mobile/mobile.context.jsx';
 import { RouteProvider } from './providers/route/route.context.jsx';
 
-import { mapboxReducer } from './providers/mapbox/mapbox.reducer';
-import { coordinatesReducer } from './providers/coordinates/coordinates.reducer';
-import { graphhopperReducer } from './providers/graphhopper/graphhopper.reducer';
-
 import './App.scss';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZWphc25rYXJvIiwiYSI6ImNsYndjOTduajBiY2QzbnFueGY0d3E4anQifQ.yjV2mQdGzjjNuCwKZz-e-Q';
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 function App() {
   const defaultCor = {
@@ -73,9 +68,9 @@ function App() {
   return (
     <div className="app">
       <GraphhopperContext.Provider value={graphProviderState}>
-        <Sidebar />
-        <div className="main">
-          <CoordinatesContext.Provider value={corProviderState}>
+        <CoordinatesContext.Provider value={corProviderState}>
+          <Sidebar />
+          <div className="main">
             <MapContext.Provider value={mapProviderState}>
               <RouteProvider>
                 <Map />
@@ -86,8 +81,8 @@ function App() {
                 </StopsContext.Provider>
               </RouteProvider>
             </MapContext.Provider>
-          </CoordinatesContext.Provider>
-        </div>
+          </div>
+        </CoordinatesContext.Provider>
       </GraphhopperContext.Provider>
     </div>
   );
