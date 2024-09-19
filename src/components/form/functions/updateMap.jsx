@@ -7,7 +7,7 @@ export const updateMap = async (corState, mapState, graphDispatch) => {
     mapState.removeLayer('route');
     mapState.removeSource('route');
   }
-
+  
   addRoutes(mapState, data.paths[0].points.coordinates);
   await graphDispatch(data);
 
