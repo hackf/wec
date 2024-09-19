@@ -15,12 +15,10 @@ const Sidebar = () => {
   const componentRef = useRef();
 
   const handlePrint = useReactToPrint({
-
-    copyStyles: false,
     content: () => componentRef.current,
     documentTitle: 'Directions',
     onBeforeGetContent: () => {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         setTimeout(resolve, 500);
       });
     },
@@ -60,17 +58,15 @@ const Sidebar = () => {
     return <BsArrowLeft className="sidebar__button" />;
   };
 
-
-return (
+  return (
     <div className={`sidebar ${isOpen ? 'activate' : ''}`}>
-
       <div className="sidebar__open">
         <div className="sidebar__button--container" onClick={on_click}>
           {display_arrow()}
         </div>
       </div>
-      <div ref={componentRef}>
-        <div className="sidebar__content">
+      <div className="sidebar__content">
+        <div ref={componentRef} className="sidebar__content--ref">
           <div className="sidebar__content--title">Directions</div>
           {displayInstructions() ? (
             <>
@@ -83,12 +79,11 @@ return (
             </>
           ) : (
             <p className="sidebar__content--noContent">
-              Directions will appear here after submitting your desired stops. Please select and submit your stops in the
-              Windsor Essex Cycling form.
+              Directions will appear here after submitting your desired stops. Please select and submit your stops in
+              the Windsor Essex Cycling form.
             </p>
           )}
         </div>
-
       </div>
     </div>
   );
