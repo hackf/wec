@@ -9,7 +9,6 @@ import { useStopsContext } from '../../providers/stops/stops.context.jsx';
 import useRoute from '../../providers/route/route.context.jsx';
 import { addMarker, setMarker } from '../map/functions/map.markers.jsx';
 import math, { distance_meters } from '../math/math.component.jsx';
-//import * as Location from 'expo-location';
 
 import './details.styles.scss';
 import { updateMap } from '../form/functions/updateMap.jsx';

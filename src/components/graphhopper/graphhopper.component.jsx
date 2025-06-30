@@ -1,19 +1,27 @@
-export const getCoordinates = async addr => {
+export const getCoordinates = async queryString => {
   const query = new URLSearchParams({
-    q: addr,
-    locale: 'en',
-    limit: '5',
-    reverse: 'false',
-    debug: 'false',
-    //provider: 'nominatim',
+    q: queryString,
+    limit: 5,
+    debug: true,
+    point: '42.31743,-83.02677',
     provider: 'default',
-    //countrycode: 'ca',
     key: process.env.REACT_APP_API_KEY,
+    bbox: [-83.139, 41.7252, -82.474, 42.4234],
   }).toString();
 
   const response = await fetch(`https://graphhopper.com/api/1/geocode?${query}`, { method: 'GET' });
 
-  return await response.json();
+  const result = await response.json();
+
+  if (!("hits" in result) || result.hits.length === 0) {
+    return [];
+  }
+
+  return result.hits.map(record => ({
+    label: `${record.name}, ${record.city != null ? record.city : ""} ${record.country}`,
+    lat: record.point.lat,
+    lng: record.point.lng,
+  }));
 };
 
 export const routes = async props => {
