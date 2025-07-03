@@ -26,7 +26,6 @@ function debounce(fn) {
 }
 
 async function fetchGeoCoding(input, state) {
-  console.log(input, state);
   return await getCoordinates(input, state);
 };
 
@@ -38,7 +37,6 @@ export const Input = ({ label, type, placeholder }) => {
   const { corState, corDispatch } = useCoordinatesContext();
   const { mapState } = useMapContext();
   const { mobileDispatch } = useMobileContext();
-  const [hiddenValue, setHiddenValue] = useState(false);
   const [location, setLocation] = useState(null);
 
   async function handleChange(event) {
@@ -66,18 +64,6 @@ export const Input = ({ label, type, placeholder }) => {
     },
     [corState]
   );
-
-  const hideValue = e => {
-    e.preventDefault();
-    const target = e.target.offsetParent.children[0];
-    const placeholder = target.innerText === 'Search Here...';
-
-    if (placeholder || (!placeholder && target.ariaSelected)) {
-      setHiddenValue(false);
-    } else {
-      setHiddenValue(true);
-    }
-  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -107,7 +93,7 @@ export const Input = ({ label, type, placeholder }) => {
   );
 
   return (
-    <label className={hiddenValue ? `input__label hideSelection` : `input__label`} onClick={hideValue}>
+    <label className="input__label">
       {type === 'mobile' ? '' : `${label}:`}
       <AsyncSelect
         cacheOptions={true}

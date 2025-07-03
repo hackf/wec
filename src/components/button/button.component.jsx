@@ -14,6 +14,7 @@ export const Add = ({ mobile }) => {
       <Input
         label={`Stop ${stopsState.length + 1}`}
         id={`Stop ${stopsState.length + 1}`}
+        key={`Stop ${stopsState.length + 1}`}
         placeholder={mobile ? `Stop ${stopsState.length + 1}` : null}
         type={mobile ? 'mobile' : null}
       />,
@@ -22,12 +23,13 @@ export const Add = ({ mobile }) => {
 
   return (
     <div className="add">
-      <div className={`add__overlay`} onClick={addStop}>
-        <p>+ Add Destination</p>
-      </div>
-      <div className="add__button">
-        <Input label="Add" type="mobile" />
-      </div>
+      <button
+        className="add__button"
+        onClick={addStop}
+        type="button"
+      >
+        + Add Destination
+      </button>
     </div>
   );
 };
