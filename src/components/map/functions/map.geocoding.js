@@ -15,7 +15,7 @@ export const geoCoding = async (addr, state) => {
     language: 'en',
     limit: '5',
     proximity: `${proxCoords[0]}, ${proxCoords[1]}`,
-    access_token: process.env.REACT_APP_GEOCODING_ACCESS_TOKEN,
+    access_token: import.meta.env.VITE_APP_GEOCODING_ACCESS_TOKEN,
   }).toString();
 
   // FOR DETROIT INTEGRATION: remove 'country' parameter in the query above.
