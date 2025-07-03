@@ -14,7 +14,7 @@ import { RouteProvider } from './providers/route/route.context.jsx';
 
 import './App.scss';
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
 
 function App() {
   const defaultCor = {

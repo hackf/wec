@@ -5,7 +5,7 @@ export const getCoordinates = async queryString => {
     debug: true,
     point: '42.31743,-83.02677',
     provider: 'default',
-    key: process.env.REACT_APP_API_KEY,
+    key: import.meta.env.VITE_APP_API_KEY,
     bbox: [-83.139, 41.7252, -82.474, 42.4234],
   }).toString();
 
@@ -36,7 +36,7 @@ export const routes = async props => {
       point_hints.push(val.location);
     }
   }
-  const response = await fetch(`https://graphhopper.com/api/1/route?key=${process.env.REACT_APP_API_KEY}`, {
+  const response = await fetch(`https://graphhopper.com/api/1/route?key=${import.meta.env.VITE_APP_API_KEY}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
