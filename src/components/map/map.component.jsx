@@ -34,7 +34,7 @@ const Map = () => {
   useEffect(() => {
     if (!mapState) return;
     mapState.on('style.load', async () => {
-      if (corState.start) {
+      if (corState.start != null && corState.end != null) {
         const data = await routes(corState);
 
         if (!data[0]) return;
