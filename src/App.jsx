@@ -1,69 +1,60 @@
-import React, { useState } from 'react';
-import mapboxgl from 'mapbox-gl';
+import React, { useState, useMemo } from 'react';
 
 import Map from './components/map/map.component';
 import Sidebar from './components/sidebar/sidebar.component';
-import Menu from './components/menu/menu.component';
 
 import CoordinatesContext from './providers/coordinates/coordinates.context';
-import MapContext from './providers/mapbox/mapbox.context';
 import GraphhopperContext from './providers/graphhopper/graphhopper.context';
 import StopsContext from './providers/stops/stops.context.jsx';
-import MobileContext from './providers/mobile/mobile.context.jsx';
-import { RouteProvider } from './providers/route/route.context.jsx';
 
 import './App.scss';
 
-mapboxgl.accessToken = import.meta.env.VITE_APP_MAPBOX_ACCESS_TOKEN;
+const defaultCor = {
+  start: undefined,
+  stop_1: undefined,
+  stop_2: undefined,
+  stop_3: undefined,
+  end: undefined,
+};
 
 function App() {
-  const defaultCor = {
-    start: undefined,
-    stop_1: undefined,
-    stop_2: undefined,
-    stop_3: undefined,
-    end: undefined,
-  };
   const [corState, setCor] = useState(defaultCor);
-  const [mapState, setMap] = useState(undefined);
   const [graphState, setGraph] = useState(undefined);
   const [stopsState, setStops] = useState([]);
-  const [mobileState, setMobile] = useState('searching');
 
-  const mapProviderState = {
-    mapState,
-    mapDispatch: val => setMap(val),
-  };
+  const corProviderState = useMemo(
+    () => ({
+      corState,
+      corDispatch: ({ lat, lng, location, field }, start) => {
+        if (start) {
+          setCor({ ...defaultCor, start });
+        } else {
+          const newArr = { ...corState };
+          newArr[field] = { lat, lng, location };
+          setCor(newArr);
+        }
+      },
+    }),
+    [corState, setCor],
+  );
 
-  const mobileProviderState = {
-    mobileState,
-    mobileDispatch: val => setMobile(val),
-  };
+  const graphProviderState = useMemo(
+    () => ({
+      graphState,
+      graphDispatch: async val => {
+        setGraph(val);
+      },
+    }),
+    [graphState, setGraph],
+  );
 
-  const corProviderState = {
-    corState,
-    corDispatch: ({ lat, lng, location, field }, start) => {
-      if (start) {
-        setCor({ ...defaultCor, start });
-      } else {
-        const newArr = { ...corState };
-        newArr[field] = { lat, lng, location };
-        setCor(newArr);
-      }
-    },
-  };
-
-  const graphProviderState = {
-    graphState,
-    graphDispatch: async val => {
-      await setGraph(val);
-    },
-  };
-
-  const stopsProviderState = {
-    stopsState,
-    stopsDispatch: val => setStops(val),
-  };
+  const stopsProviderState = useMemo(
+    () => ({
+      stopsState,
+      stopsDispatch: val => setStops(val),
+    }),
+    [stopsState, setStops],
+  );
 
   return (
     <div className="app">
@@ -71,16 +62,9 @@ function App() {
         <CoordinatesContext.Provider value={corProviderState}>
           <Sidebar />
           <div className="main">
-            <MapContext.Provider value={mapProviderState}>
-              <RouteProvider>
-                <Map />
-                <StopsContext.Provider value={stopsProviderState}>
-                  <MobileContext.Provider value={mobileProviderState}>
-                    <Menu />
-                  </MobileContext.Provider>
-                </StopsContext.Provider>
-              </RouteProvider>
-            </MapContext.Provider>
+            <StopsContext.Provider value={stopsProviderState}>
+              <Map />
+            </StopsContext.Provider>
           </div>
         </CoordinatesContext.Provider>
       </GraphhopperContext.Provider>

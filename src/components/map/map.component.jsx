@@ -1,51 +1,111 @@
-import { useRef, useEffect } from 'react';
+import { useMemo, useEffect } from "react";
 
-import { useMapContext } from '../../providers/mapbox/mapbox.context';
-import addRoutes from './functions/map.routes';
-import setThreeD from './functions/map.3d';
-import { initilize } from './functions/map.initialize';
-import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
-import { routes } from '../graphhopper/graphhopper.component';
+import { GeoJSON as LGeoJSON, LatLngBounds } from "leaflet";
 
-import './map.styles.scss';
+import { useMapEvents, useMap } from "react-leaflet/hooks";
+import { MapContainer } from 'react-leaflet/MapContainer'
+import { Polyline } from 'react-leaflet/Polyline'
+import { TileLayer } from 'react-leaflet/TileLayer'
+import { AttributionControl } from 'react-leaflet/AttributionControl'
+
+import CustomControls from './controls/CustomControls';
+import Menu from '../menu/menu.component';
+import Dashboard from '../dashboard/dashboard.component';
+
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
 
-const Map = () => {
-  const mapContainer = useRef(null);
-  const { mapState, mapDispatch } = useMapContext();
-  const { corState } = useCoordinatesContext();
-  const { graphDispatch } = useGraphhopperContext();
+import './map.styles.scss';
 
-  useEffect(() => {
-    const setMap = async () => {
-      initilize(mapState, mapDispatch, mapContainer, [-83.0363633, 42.3149367]);
-    };
-
-    setMap();
-  }, [mapState, mapDispatch]);
-
-  useEffect(() => {
-    if (mapState === undefined) return;
-    mapState.on('style.load', () => {
-      setThreeD(mapState);
-    });
+function MapEvents() {
+  const map = useMapEvents({
+    moveend(e) {
+      console.log("moveend", e);
+      console.log("Center of Map", map.getCenter());
+    },
+    locationfound(e) {
+      console.log("location", e);
+    },
   });
 
-  useEffect(() => {
-    if (!mapState) return;
-    mapState.on('style.load', async () => {
-      if (corState.start != null && corState.end != null) {
-        const data = await routes(corState);
+  return null;
+}
 
-        if (!data[0]) return;
+/**
+ * Route component's props definition
+ * @typedef {Object} RouteProps
+ * @property {LatLng[]} path
+ */
 
-        addRoutes(mapState, data.paths[0].points.coordinates);
-        await graphDispatch(data);
+/**
+ * Displays the submitted route on the map
+ * @param {RouteProps}
+ * @returns {ReactNode} A Polyline that represents the route
+ */
+function Route({ path }) {
+  console.log(path);
+  const map = useMap();
+  useEffect(
+    () => {
+      if (path.length <= 0) {
+        return;
       }
-    });
-  });
+      map.flyToBounds(
+        new LatLngBounds(path[0], path[path.length - 1]),
+        {
+          animate: true,
+        },
+      );
+    },
+    [path],
+  );
+  return (
+    <Polyline positions={path} pathOptions={{ weight: 8 }} />
+  );
+}
 
-  return <div ref={mapContainer} className="map" />;
+const Map = () => {
+  const { graphState } = useGraphhopperContext();
+
+  const path = useMemo(
+    () => {
+      console.log("ROUTE", graphState);
+
+      if (graphState == null) {
+        return [];
+      }
+
+      return LGeoJSON.coordsToLatLngs(graphState.paths[0].points.coordinates);
+    },
+    [graphState],
+  );
+
+  return (
+    <div className="map">
+      <MapContainer
+        id="map"
+        style={{ width: "100%", height: "100%" }}
+        center={[42.3149367, -83.0363633]}
+        zoom={15}
+        zoomControl={false}
+        scrollWheelZoom={true}
+        attributionControl={false}
+      >
+        <Route path={path} />
+        <MapEvents />
+        <CustomControls useLeafletStyles={false} position="topleft">
+          <Menu />
+        </CustomControls>
+        <CustomControls useLeafletStyles={false} position="bottomleft">
+          <Dashboard />
+        </CustomControls>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <AttributionControl position="topright"/>
+      </MapContainer>
+    </div>
+  );
 };
 
 export default Map;
