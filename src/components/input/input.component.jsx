@@ -2,9 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
 
 import { useCoordinatesContext } from '../../providers/coordinates/coordinates.context';
-import { useMapContext } from '../../providers/mapbox/mapbox.context';
-import { useMobileContext } from '../../providers/mobile/mobile.context';
-import { getCoordinates } from '../graphhopper/graphhopper.component';
+import { getCoordinates } from '../map/functions/map.geolocate';
 
 import './input.styles.scss';
 
@@ -33,23 +31,11 @@ async function fetchGeoCoding(input, state) {
 // each key press made by the user
 const debouncedFetchGeoCoding = debounce(fetchGeoCoding);
 
-export const Input = ({ label, type, placeholder }) => {
+export const Input = ({ label, placeholder }) => {
   const { corState, corDispatch } = useCoordinatesContext();
-  const { mapState } = useMapContext();
-  const { mobileDispatch } = useMobileContext();
   const [location, setLocation] = useState(null);
 
   async function handleChange(event) {
-    if (label === 'end' && type === 'mobile') {
-      mapState.flyTo({
-        duration: 4000,
-        center: [event.lng, event.lat],
-        zoom: 16,
-      });
-
-      mobileDispatch('details');
-    }
-
     await corDispatch({
       field: label.toLowerCase().replace(' ', '_'),
       lat: event.lat,
@@ -94,7 +80,7 @@ export const Input = ({ label, type, placeholder }) => {
 
   return (
     <label className="input__label">
-      {type === 'mobile' ? '' : `${label}:`}
+      {label}
       <AsyncSelect
         cacheOptions={true}
         isClearable={false}

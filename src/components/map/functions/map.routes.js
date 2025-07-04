@@ -1,30 +1,4 @@
-export const getCoordinates = async queryString => {
-  const query = new URLSearchParams({
-    q: queryString,
-    limit: 5,
-    debug: true,
-    point: '42.31743,-83.02677',
-    provider: 'default',
-    key: import.meta.env.VITE_APP_API_KEY,
-    bbox: [-83.139, 41.7252, -82.474, 42.4234],
-  }).toString();
-
-  const response = await fetch(`https://graphhopper.com/api/1/geocode?${query}`, { method: 'GET' });
-
-  const result = await response.json();
-
-  if (!("hits" in result) || result.hits.length === 0) {
-    return [];
-  }
-
-  return result.hits.map(record => ({
-    label: `${record.name}, ${record.city != null ? record.city : ""} ${record.country}`,
-    lat: record.point.lat,
-    lng: record.point.lng,
-  }));
-};
-
-export const routes = async props => {
+export const fetchRoute = async props => {
   const keys = ['start', 'stop_1', 'stop_2', 'stop_3', 'end'];
   const points = [];
   const point_hints = [];
@@ -36,6 +10,7 @@ export const routes = async props => {
       point_hints.push(val.location);
     }
   }
+
   const response = await fetch(`https://graphhopper.com/api/1/route?key=${import.meta.env.VITE_APP_API_KEY}`, {
     method: 'POST',
     headers: {
@@ -61,9 +36,9 @@ export const routes = async props => {
         { 'if': 'road_class == CYCLEWAY', 'multiply_by': '1.0' },
         { 'if': 'bike_network == MISSING', 'multiply_by': '0.7' },
         { 'if': 'max_speed >= 60', 'multiply_by': '0.1' },
-        { 'if': 'lanes > 2', 'multiply_by': '0.2' }
-      ]
-    })
+        { 'if': 'lanes > 2', 'multiply_by': '0.2' },
+      ],
+    }),
   });
 
   return await response.json();

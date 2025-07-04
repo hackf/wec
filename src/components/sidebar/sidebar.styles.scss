@@ -6,7 +6,7 @@
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
   grid-column: 3 / 4;
   grid-row: 1/2;
-  z-index: 100;
+  z-index: 2000;
 
   display: grid;
   grid-template-columns: 50px 1fr;
@@ -62,10 +62,6 @@
     }
   }
 
-  @include respond(phone) {
-    display: none;
-  }
-
   button {
     color: white;
     font-weight: bold;
@@ -92,14 +88,4 @@
 
 h2 {
   text-align: center;
-}
-
-@media print {
-  .sidebar__content--instructions {
-    overflow-y: visible;
-  }
-
-  button {
-    display: none;
-  }
 }

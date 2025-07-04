@@ -21,18 +21,9 @@
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     cursor: pointer;
-
-    @include respond(phone) {
-      border-radius: 0px;
-      grid-row: 3/4;
-
-      height: 4rem;
-      font-size: 2rem;
-    }
   }
 
   &__inputs {
-    z-index: 5;
     height: max-content;
     align-self: center;
   }

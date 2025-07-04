@@ -5,7 +5,7 @@ import { Input } from '../input/input.component';
 
 import './button.styles.scss';
 
-export const Add = ({ mobile }) => {
+export const Add = () => {
   const { stopsState, stopsDispatch } = useStopsContext();
 
   function addStop() {
@@ -15,8 +15,6 @@ export const Add = ({ mobile }) => {
         label={`Stop ${stopsState.length + 1}`}
         id={`Stop ${stopsState.length + 1}`}
         key={`Stop ${stopsState.length + 1}`}
-        placeholder={mobile ? `Stop ${stopsState.length + 1}` : null}
-        type={mobile ? 'mobile' : null}
       />,
     ]);
   }
@@ -41,5 +39,5 @@ export const Directions = () => {
     return <div className="directions">Directions</div>;
   }
 
-  return <></>;
+  return null;
 };
