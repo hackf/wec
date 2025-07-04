@@ -5,12 +5,14 @@ import { GeoJSON as LGeoJSON, LatLngBounds } from "leaflet";
 import { useMapEvents, useMap } from "react-leaflet/hooks";
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { Polyline } from 'react-leaflet/Polyline'
+import { Pane } from 'react-leaflet/Pane'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import { AttributionControl } from 'react-leaflet/AttributionControl'
 
 import CustomControls from './controls/CustomControls';
 import Menu from '../menu/menu.component';
 import Dashboard from '../dashboard/dashboard.component';
+import DivIcon from "./DivIcon";
 
 import { useGraphhopperContext } from '../../providers/graphhopper/graphhopper.context';
 
@@ -22,12 +24,45 @@ function MapEvents() {
       console.log("moveend", e);
       console.log("Center of Map", map.getCenter());
     },
-    locationfound(e) {
-      console.log("location", e);
-    },
   });
 
   return null;
+}
+
+/**
+ * LineString
+ * @typedef {Object} LineString
+ * @property {"LineString"} type
+ * @property {number[][]} coordinates
+ */
+
+/**
+ * StopMarkers component's props definition
+ * @typedef {Object} StopMarkersProps
+ * @property {LineString} waypoints
+ */
+
+/**
+ * Displays the submitted route on the map
+ * @param {StopMarkersProps}
+ * @returns {ReactNode} A Polyline that represents the route
+ */
+function StopMarkers({ waypoints }) {
+  console.log("waypoints", waypoints);
+  return (
+    <Pane name="stop-markers" style={{ zIndex: 500 }}>
+      { waypoints.coordinates.map((point, index) => (
+        <DivIcon
+          key={index}
+          id={`stop${index}`}
+          number={index + 1}
+          color="#FF1439"
+          textColor="#FFFFFF"
+          position={point.slice().reverse()}
+        />
+      )) }
+    </Pane>
+  );
 }
 
 /**
@@ -42,7 +77,6 @@ function MapEvents() {
  * @returns {ReactNode} A Polyline that represents the route
  */
 function Route({ path }) {
-  console.log(path);
   const map = useMap();
   useEffect(
     () => {
@@ -68,13 +102,25 @@ const Map = () => {
 
   const path = useMemo(
     () => {
-      console.log("ROUTE", graphState);
-
       if (graphState == null) {
         return [];
       }
 
       return LGeoJSON.coordsToLatLngs(graphState.paths[0].points.coordinates);
+    },
+    [graphState],
+  );
+
+  /** @type LineString */
+  const snappedWaypoints = useMemo(
+    () => {
+      if (graphState == null) {
+        return {
+          type: "LineString",
+          coordinates: [],
+        };
+      }
+      return graphState.paths[0].snapped_waypoints;
     },
     [graphState],
   );
@@ -92,6 +138,7 @@ const Map = () => {
       >
         <Route path={path} />
         <MapEvents />
+        <StopMarkers waypoints={snappedWaypoints} />
         <CustomControls useLeafletStyles={false} position="topleft">
           <Menu />
         </CustomControls>
