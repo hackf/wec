@@ -1,0 +1,26 @@
+.tray {
+    background-color: white;
+    width: 100%;
+}
+
+.tray-content {
+    overflow-y: hidden;
+}
+
+.tray-draggable {
+    width: 100%;
+    color: black;
+    font-size: 1rem;
+    background-color: transparent;
+    border: none;
+}
+
+.tray-draggable:focus,
+.tray-draggable:focus-visible,
+.tray-draggable:focus-within,
+.tray-draggable:active {
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

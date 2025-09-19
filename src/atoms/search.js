@@ -98,7 +98,6 @@ export function useGeoSearch() {
       });
       debouncedFetchGeoCoding(inputValue)
         .then((data) => {
-          console.log("GOT DATA", data);
           setState((state) => {
             state.state = "done";
             state.data = data;

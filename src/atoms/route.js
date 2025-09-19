@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useAtom} from "jotai";
+import { useAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
 import { GeoJSON as LGeoJSON } from "leaflet";
 

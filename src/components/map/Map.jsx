@@ -1,23 +1,23 @@
-
 import { Link, Route, Switch } from "wouter";
 
-import { MapContainer } from 'react-leaflet/MapContainer'
-import { TileLayer } from 'react-leaflet/TileLayer'
-import { AttributionControl } from 'react-leaflet/AttributionControl'
+import { MapContainer } from "react-leaflet/MapContainer";
+import { TileLayer } from "react-leaflet/TileLayer";
+import { AttributionControl } from "react-leaflet/AttributionControl";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRoute, faPenToSquare, faCompass } from "@fortawesome/free-solid-svg-icons";
+import { faRoute, faPenToSquare, faCompass, faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 
-import CustomControls from './controls/CustomControls';
+import CustomControls from "./controls/CustomControls";
 import EditStops from "./EditStops";
 import MapRoute from "./MapRoute";
+import MapTray from "./controls/MapTray";
+import ControlNavigationButton from "./controls/ControlNavigationButton";
 
-import './map.styles.scss';
+import mapClasses from "./map.module.css";
 
-const Map = () => {
-
+function Map() {
   return (
-    <div className="map">
+    <div className={mapClasses["map"]}>
       <MapContainer
         id="map"
         style={{ width: "100%", height: "100%" }}
@@ -27,31 +27,40 @@ const Map = () => {
         scrollWheelZoom={true}
         attributionControl={false}
       >
-        <CustomControls useLeafletStyles={false} position="topleft">
-          <div className="controls">
-            <div>
-              <Link to="/">
-                <FontAwesomeIcon icon={faRoute} />
-              </Link>
-              <Link to="/edit/stops">
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </Link>
-              <Link to="/directions">
-                <FontAwesomeIcon icon={faCompass} />
-              </Link>
-            </div>
-            <Switch>
-              <Route path="/">
-                <MapRoute />
-              </Route>
-              <Route path="/edit" nest>
-                <EditStops />
-              </Route>
-              <Route path="/directions">
-              </Route>
-            </Switch>
-          </div>
+        <CustomControls useLeafletStyles={false} position="bottomleft">
+          <Link to="/" asChild>
+            <ControlNavigationButton>
+              <FontAwesomeIcon icon={faRoute} />
+            </ControlNavigationButton>
+          </Link>
+          <Link to="/edit/stops" asChild>
+            <ControlNavigationButton>
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </ControlNavigationButton>
+          </Link>
+          <Link to="/directions" asChild>
+            <ControlNavigationButton>
+              <FontAwesomeIcon icon={faCompass} />
+            </ControlNavigationButton>
+          </Link>
         </CustomControls>
+        <CustomControls useLeafletStyles={false} position="bottomright">
+          <button>
+            <FontAwesomeIcon icon={faLocationCrosshairs} />
+          </button>
+        </CustomControls>
+        <MapTray>
+          <Switch>
+            <Route path="/">
+              <MapRoute />
+            </Route>
+            <Route path="/edit" nest>
+              <EditStops />
+            </Route>
+            <Route path="/directions">
+            </Route>
+          </Switch>
+        </MapTray>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -60,6 +69,6 @@ const Map = () => {
       </MapContainer>
     </div>
   );
-};
+}
 
 export default Map;

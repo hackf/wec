@@ -7,7 +7,6 @@ import { Pane } from 'react-leaflet/Pane'
 import DivIcon from "./DivIcon";
 
 import Dashboard from '../dashboard/dashboard.component';
-import CustomControls from './controls/CustomControls';
 
 import useRoute from "../../atoms/route";
 

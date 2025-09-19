@@ -35,12 +35,10 @@
     "jotai": "^2.12.5",
     "jotai-immer": "^0.4.1",
     "leaflet": "^1.9.4",
-    "mapbox-gl": "^2.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-leaflet": "^4.2.1",
-    "react-router-dom": "^6.14.1",
     "react-select": "^5.10.1",
     "react-to-print": "^2.15.1",
     "wouter": "^3.7.1"

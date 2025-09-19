@@ -1,0 +1,29 @@
+.map {
+    height: 100%;
+    position: relative;
+
+    a {
+        font-weight: 700;
+        text-decoration: none;
+        color: black;
+        padding: 5px 5px 10px 5px;
+
+        &:hover {
+            color: #01abe5;
+        }
+    }
+}
+
+.active-link {
+    color: red;
+}
+
+.map-picker {
+    z-index: 1000;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}

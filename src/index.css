@@ -1,0 +1,82 @@
+@import "leaflet/dist/leaflet.css";
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+.leaflet-grid-control-container {
+    --gap-size: 10px;
+    --middle-min-size: 20px;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    grid-gap: var(--gap-size);
+    display: grid;
+    grid-template-columns: 1fr min-content 1fr;
+    grid-template-rows: 1fr min-content 1fr min-content;
+
+    .leaflet-grid-row-center {
+        grid-row-start: 2;
+        grid-row-end: 3;
+        min-height: var(--middle-min-size);
+    }
+
+    .leaflet-grid-column-center {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        min-width: var(--middle-min-size);
+    }
+
+    .leaflet-grid-left {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        justify-self: start;
+    }
+
+    .leaflet-grid-right {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        justify-self: end;
+    }
+
+    .leaflet-grid-top {
+        grid-row-start: 1;
+        grid-row-end: 2;
+        align-self: start;
+    }
+
+    .leaflet-grid-bottom {
+        grid-row-start: 3;
+        grid-row-end: 4;
+        align-self: end;
+    }
+
+    .leaflet-grid-tray {
+        grid-row-start: 4;
+        grid-row-end: 5;
+        grid-column-start: 1;
+        grid-column-end: 4;
+        align-self: start;
+
+        /*
+* Leaflet still adds the leaflet-control class to the
+* control container so this rule overrides the more annoying
+* styles that prevent it from being easily customized
+*/
+        .leaflet-control {
+            float: none;
+        }
+    }
+}
+
