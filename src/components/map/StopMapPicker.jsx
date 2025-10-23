@@ -55,25 +55,25 @@ export default function StopMapPicker() {
         left: (rect.height / 2) * -1,
       });
 
-    const observer = new MutationObserver(() => {
-      const rect = elementRef.current.getBoundingClientRect();
-      setPosition({
-        top: (rect.height / 2) * -1,
-        left: (rect.height / 2) * -1,
+      const observer = new MutationObserver(() => {
+        const rect = elementRef.current.getBoundingClientRect();
+        setPosition({
+          top: (rect.height / 2) * -1,
+          left: (rect.height / 2) * -1,
+        });
       });
-    });
 
-    observer.observe(elementRef.current, {
-      attributes: true,
-      subtree: true,
-    });
-    
-    return () => {
-      observer.disconnect();
-    };
-  },
-  [],
-);
+      observer.observe(elementRef.current, {
+        attributes: true,
+        subtree: true,
+      });
+
+      return () => {
+        observer.disconnect();
+      };
+    },
+    [],
+  );
 
   return (
     <>
