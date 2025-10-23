@@ -45,6 +45,22 @@ export default function StopMapPicker() {
     [navigate],
   );
 
+  // change the cursor to pointer while placing a stop
+  useEffect(() => {
+    const mapContainer = document.querySelector('.leaflet-container');
+    if (!mapContainer) {
+      return;
+    }
+
+    if (!selected) {
+      mapContainer.style.cursor = 'pointer';
+    }
+
+    return () => {
+      mapContainer.style.cursor = '';
+    };
+  }, [selected]);
+
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const elementRef = useRef(null);
   useEffect(
