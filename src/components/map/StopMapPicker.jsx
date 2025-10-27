@@ -61,36 +61,6 @@ export default function StopMapPicker() {
     };
   }, [selected]);
 
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const elementRef = useRef(null);
-  useEffect(
-    () => {
-      const rect = elementRef.current.getBoundingClientRect();
-      setPosition({
-        top: (rect.height / 2) * -1,
-        left: (rect.height / 2) * -1,
-      });
-
-      const observer = new MutationObserver(() => {
-        const rect = elementRef.current.getBoundingClientRect();
-        setPosition({
-          top: (rect.height / 2) * -1,
-          left: (rect.height / 2) * -1,
-        });
-      });
-
-      observer.observe(elementRef.current, {
-        attributes: true,
-        subtree: true,
-      });
-
-      return () => {
-        observer.disconnect();
-      };
-    },
-    [],
-  );
-
   return (
     <>
       <button
@@ -104,12 +74,6 @@ export default function StopMapPicker() {
       <button type="button" onClick={handleCancel}>
         <FontAwesomeIcon icon={faXmark} />
       </button>
-
-      <CustomControls useLeafletStyles={false} position="center">
-        <div className="map-picker" ref={elementRef} style={position}>
-          <FontAwesomeIcon icon={faCircleDot} color="#FF0000B0" size="2x" />
-        </div>
-      </CustomControls>
     </>
   );
 }
