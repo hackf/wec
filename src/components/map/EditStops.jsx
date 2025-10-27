@@ -3,14 +3,14 @@ import { Route, Link, Switch, useLocation } from "wouter";
 import { Pane } from "react-leaflet/Pane";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import SearchMap from "./SearchMap";
 import DivIcon from "./DivIcon";
 import SearchIcon from "./SearchIcon";
 import StopMapPicker from "./StopMapPicker";
 
-import { useStops, useAddStops } from "../../atoms/stops";
+import { useStops, useAddStops, useRemoveStop } from "../../atoms/stops";
 import { useSearchData } from "../../atoms/search";
 import useRoute from "../../atoms/route";
 
@@ -68,6 +68,7 @@ export default function EditStops() {
   );
 
   const addStop = useAddStops();
+  const removeStop = useRemoveStop();
   const [, fetchRoute] = useRoute();
 
   const [, navigate] = useLocation();
@@ -92,6 +93,9 @@ export default function EditStops() {
                 <Link to={`/search/${index + 1}`}>
                   <FontAwesomeIcon icon={faPenToSquare} />
                 </Link>
+                <button type="button" onClick={() => removeStop(index)}>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
               </li>
             ))}
           </ol>

@@ -35,6 +35,18 @@ const updateStopAtom = atom(
   },
 );
 
+const removeStopAtom = atom(
+  null,
+  (_get, set, index) => {
+    set(stopsAtom, (stops) => {
+      if (index < 0 || index >= stops.length) {
+        return;
+      }
+      stops.splice(index, 1);
+    });
+  },
+);
+
 export function useStops() {
   return useAtomValue(stopsAtom);
 }
@@ -45,4 +57,8 @@ export function useAddStops() {
 
 export function useUpdateStop() {
   return useSetAtom(updateStopAtom);
+}
+
+export function useRemoveStop() {
+  return useSetAtom(removeStopAtom);
 }
