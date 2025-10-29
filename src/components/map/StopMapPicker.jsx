@@ -1,15 +1,13 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 import { useParams, useLocation } from "wouter";
 
 import { useMapEvent } from "react-leaflet";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleDot, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { useUpdateStop } from "../../atoms/stops";
-
-import CustomControls from './controls/CustomControls';
 
 export default function StopMapPicker() {
   const [selected, setSelected] = useState(null); // { lat, lng } or null
