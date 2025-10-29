@@ -61,12 +61,7 @@ export default function StopMapPicker() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handleAccept}
-        disabled={!selected} // disabled and greyed out until user clicks on map
-        style={{ opacity: !selected ? 0.5 : 1 }}
-      >
+      <button type="button" onClick={handleAccept} disabled={!selected}>
         <FontAwesomeIcon icon={faCheck} />
       </button>
       <button type="button" onClick={handleCancel}>
