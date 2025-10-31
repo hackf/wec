@@ -5,13 +5,15 @@ import { TileLayer } from "react-leaflet/TileLayer";
 import { AttributionControl } from "react-leaflet/AttributionControl";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRoute, faPenToSquare, faCompass, faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
+import { faRoute, faPenToSquare, faCompass } from "@fortawesome/free-solid-svg-icons";
 
 import CustomControls from "./controls/CustomControls";
 import EditStops from "./EditStops";
 import MapRoute from "./MapRoute";
 import MapTray from "./controls/MapTray";
 import ControlNavigationButton from "./controls/ControlNavigationButton";
+import Geolocation from "./Geolocation";
+import UserLocationMarker from "./UserLocationMarker";
 
 import mapClasses from "./map.module.css";
 
@@ -45,10 +47,9 @@ function Map() {
           </Link>
         </CustomControls>
         <CustomControls useLeafletStyles={false} position="bottomright">
-          <button>
-            <FontAwesomeIcon icon={faLocationCrosshairs} />
-          </button>
+          <Geolocation />
         </CustomControls>
+        <UserLocationMarker />
         <MapTray>
           <Switch>
             <Route path="/">
