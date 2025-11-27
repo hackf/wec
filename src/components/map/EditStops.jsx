@@ -1,18 +1,19 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { Route, Link, Switch, useLocation } from "wouter";
 import { Pane } from "react-leaflet/Pane";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 
 import SearchMap from "./SearchMap";
 import DivIcon from "./DivIcon";
 import SearchIcon from "./SearchIcon";
 import StopMapPicker from "./StopMapPicker";
 
-import { useStops, useAddStops, useRemoveStop } from "../../atoms/stops";
+import { useStops, useAddStops, useRemoveStop, useUpdateStop } from "../../atoms/stops";
 import { useSearchData } from "../../atoms/search";
 import useRoute from "../../atoms/route";
+import { useSetUserLocation, requestBrowserLocation, getGeolocationErrorMessage } from "../../atoms/geolocation";
 
 function SearchMarkers() {
   const searchData = useSearchData();
@@ -69,6 +70,33 @@ export default function EditStops() {
 
   const addStop = useAddStops();
   const removeStop = useRemoveStop();
+  const updateStop = useUpdateStop();
+  const setUserLocation = useSetUserLocation();
+  const [isSyncingFirstStop, setIsSyncingFirstStop] = useState(false);
+  const firstStop = stops[0];
+
+  const applyUserLocationToFirstStop = useCallback(async () => {
+    if (!firstStop || isSyncingFirstStop) {
+      return;
+    }
+    setIsSyncingFirstStop(true);
+    try {
+      const location = await requestBrowserLocation();
+      setUserLocation(location);
+      updateStop({
+        index: 1,
+        ...firstStop,
+        lat: location.lat,
+        lng: location.lng,
+      });
+    } catch (error) {
+      console.error("Error getting location:", error);
+      alert(getGeolocationErrorMessage(error));
+    } finally {
+      setIsSyncingFirstStop(false);
+    }
+  }, [firstStop, isSyncingFirstStop, setUserLocation, updateStop]);
+
   const [, fetchRoute] = useRoute();
 
   const [, navigate] = useLocation();
@@ -96,6 +124,15 @@ export default function EditStops() {
                 <button type="button" onClick={() => removeStop(index)}>
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
+                {index === 0 && (
+                  <button
+                    type="button"
+                    onClick={applyUserLocationToFirstStop}
+                    disabled={isSyncingFirstStop}
+                  >
+                    <FontAwesomeIcon icon={faLocationCrosshairs} />
+                  </button>
+                )}
               </li>
             ))}
           </ol>
