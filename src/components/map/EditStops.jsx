@@ -13,7 +13,7 @@ import StopMapPicker from "./StopMapPicker";
 import { useStops, useAddStops, useRemoveStop, useUpdateStop } from "../../atoms/stops";
 import { useSearchData } from "../../atoms/search";
 import useRoute from "../../atoms/route";
-import { useSetUserLocation, requestBrowserLocation, getGeolocationErrorMessage } from "../../atoms/geolocation";
+import { useSetUserLocation, requestBrowserLocation, getGeolocationErrorMessage, useUserLocation } from "../../atoms/geolocation";
 
 function SearchMarkers() {
   const searchData = useSearchData();
@@ -71,6 +71,7 @@ export default function EditStops() {
   const addStop = useAddStops();
   const removeStop = useRemoveStop();
   const updateStop = useUpdateStop();
+  const userLocation = useUserLocation();
   const setUserLocation = useSetUserLocation();
   const [isSyncingFirstStop, setIsSyncingFirstStop] = useState(false);
   const firstStop = stops[0];
@@ -81,21 +82,32 @@ export default function EditStops() {
     }
     setIsSyncingFirstStop(true);
     try {
-      const location = await requestBrowserLocation();
-      setUserLocation(location);
-      updateStop({
-        index: 1,
-        ...firstStop,
-        lat: location.lat,
-        lng: location.lng,
-      });
+      if (userLocation && userLocation.lat != null && userLocation.lng != null) {
+        // live tracking active - reuse atom
+        updateStop({
+          index: 1,
+          ...firstStop,
+          lat: userLocation.lat,
+          lng: userLocation.lng,
+        });
+      } else {
+        // fallback to one-time request
+        const location = await requestBrowserLocation();
+        setUserLocation(location);
+        updateStop({
+          index: 1,
+          ...firstStop,
+          lat: location.lat,
+          lng: location.lng,
+        });
+      }
     } catch (error) {
       console.error("Error getting location:", error);
       alert(getGeolocationErrorMessage(error));
     } finally {
       setIsSyncingFirstStop(false);
     }
-  }, [firstStop, isSyncingFirstStop, setUserLocation, updateStop]);
+  }, [firstStop, isSyncingFirstStop, setUserLocation, updateStop, userLocation]);
 
   const [, fetchRoute] = useRoute();
 
