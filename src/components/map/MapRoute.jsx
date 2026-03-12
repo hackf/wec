@@ -1,14 +1,18 @@
 import { useEffect } from "react";
-import { LatLngBounds } from "leaflet";
+import { LatLngBounds, Marker, divIcon } from "leaflet";
 import { useMap } from "react-leaflet/hooks";
-import { Polyline } from 'react-leaflet/Polyline'
-import { Pane } from 'react-leaflet/Pane'
+import { Polyline, Pane, Marker as RMarker } from 'react-leaflet'
 
 import DivIcon from "./DivIcon";
 
 import Dashboard from '../dashboard/dashboard.component';
 
+import { useUserLocation } from "../../atoms/geolocation";
 import useRoute from "../../atoms/route";
+import { routeProgressAtom } from "../../atoms/routeProgress";
+import { useAtom } from "jotai";
+
+import { nearestPointOnPolyline, slicePolylineFrom, slicePolylineTo } from "../../utils/geometry";
 
 /**
  * LineString
@@ -49,30 +53,48 @@ function RouteStopMarkers({ waypoints }) {
 export default function MapRoute() {
   const [routeState] = useRoute();
   const map = useMap();
-  useEffect(
-    () => {
-      if (routeState.state != "done" || routeState.data.points.length <= 0) {
-        return;
-      }
-      map.flyToBounds(
-        new LatLngBounds(routeState.data.points[0], routeState.data.points[routeState.data.points.length - 1]),
-        {
-          animate: true,
-        },
-      );
-    },
-    [routeState],
-  );
-  if (routeState.state === "idle" || routeState.state === "error") {
-    return null;
-  }
-  if (routeState.state === "loading") {
-    return null;
-  }
+  const userLocation = useUserLocation();
+  const [progress, setProgress] = useAtom(routeProgressAtom);
+
+  useEffect(() => {
+    if (routeState.state !== "done" || !routeState.data || routeState.data.points.length === 0) return;
+    const pts = routeState.data.points.map(p => [p.lat, p.lng]); // ensure [lat,lng] arrays
+    map.flyToBounds(new LatLngBounds(pts[0], pts[pts.length - 1]), { animate: true });
+    // reset progress when new route arrives
+    setProgress({ snappedIndex: 0, snappedT: 0, snappedPoint: pts[0] });
+  }, [routeState, map, setProgress]);
+
+  useEffect(() => {
+    if (routeState.state !== "done" || !routeState.data || !userLocation) return;
+    const poly = routeState.data.points.map(p => [p.lat, p.lng]);
+    // find nearest
+    const nearest = nearestPointOnPolyline({ lat: userLocation.lat, lng: userLocation.lng }, poly);
+    if (!nearest) return;
+    setProgress({ snappedIndex: nearest.index, snappedT: nearest.t, snappedPoint: [nearest.point.lat, nearest.point.lng] });
+  }, [userLocation, routeState, setProgress]);
+
+  if (routeState.state !== "done") return null;
+
+  const poly = routeState.data.points.map(p => [p.lat, p.lng]);
+  const { snappedIndex, snappedT, snappedPoint } = progress;
+  const remaining = slicePolylineFrom(poly, snappedIndex, snappedT);
+  const traveled = slicePolylineTo(poly, snappedIndex, snappedT);
+
   return (
     <>
       <RouteStopMarkers waypoints={routeState.data.waypoints} />
-      <Polyline positions={routeState.data.points} pathOptions={{ weight: 8 }} />
+      <Pane name="route-polylines" style={{ zIndex: 400 }}>
+        {/* traveled (faded) */}
+        <Polyline positions={traveled} pathOptions={{ weight: 8, color: '#999', opacity: 0.5 }} />
+        {/* remaining (main) */}
+        <Polyline positions={remaining} pathOptions={{ weight: 8, color: '#FF1439' }} />
+      </Pane>
+      {/* live snapped point marker */}
+      {snappedPoint && (
+        <Pane name="snapped-marker" style={{ zIndex: 1000 }}>
+          <RMarker position={snappedPoint} />
+        </Pane>
+      )}
       <Dashboard distance={routeState.data.distance} time={routeState.data.time} />
     </>
   );
